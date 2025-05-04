@@ -61,6 +61,5 @@ vectorstore = Chroma.from_documents(
     embedding=embedding_function,
     persist_directory=CHROMA_PATH,
 )
-vectorstore.persist()
 
 print("Embeddings generated and stored in vector store")
