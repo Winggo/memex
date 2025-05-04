@@ -49,7 +49,7 @@ This project idea was inspired by this post from Linus: https://x.com/thesephist
 
 ## Setup Issues
 
-1. Upon executing `python3 src/parsing.py`, if you encounter the following error:
+##### Upon executing `python3 src/parsing.py`, if you encounter the following error:
 ```
 [nltk_data] Error loading punkt_tab: <urlopen error [SSL:
 [nltk_data]     CERTIFICATE_VERIFY_FAILED] certificate verify failed:
@@ -59,6 +59,6 @@ This project idea was inspired by this post from Linus: https://x.com/thesephist
 Fix: `sudo /Applications/Python\ 3.12/Install\ Certificates.command`
 
 
-2. `pdf2image.exceptions.PDFInfoNotInstalledError: Unable to get page count. Is poppler installed and in PATH?`
+##### `pdf2image.exceptions.PDFInfoNotInstalledError: Unable to get page count. Is poppler installed and in PATH?`
 
 Fix: `brew install poppler`
