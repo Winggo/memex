@@ -9,7 +9,7 @@ embedding_function = TogetherEmbeddings(
 )
 
 mistral_7b_together_model = ChatTogether(
-    model="meta-llama/Llama-3.3-70B-Instruct-Turbo-Free",
+    model="NousResearch/Nous-Hermes-2-Mixtral-8x7B-DPO",
     together_api_key=os.getenv("TOGETHER_API_KEY"),
     temperature=0.7,
 )
