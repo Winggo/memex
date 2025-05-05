@@ -6,6 +6,7 @@ from unstructured_client import UnstructuredClient
 from langchain_unstructured import UnstructuredLoader
 from unstructured.cleaners.core import clean_extra_whitespace
 from langchain_chroma import Chroma
+from utils.helpers import get_file_metadata
 
 load_dotenv(".env")
 
@@ -43,8 +44,13 @@ processed_documents = []
 for doc in documents:
     if len(doc.page_content.strip()) < 30:
         continue
-    doc.metadata["languages"] = ", ".join(doc.metadata["languages"])
-    doc.metadata["type"] = "apple_note"
+    mtdata = get_file_metadata(doc.metadata["source"])
+    doc.metadata = {
+        **doc.metadata,
+        **mtdata,
+        "languages": ", ".join(doc.metadata["languages"]),
+        "type": "apple/note",
+    }
     processed_documents.append(doc)
 
 print(f"{len(processed_documents)} documents loaded.")
