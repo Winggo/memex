@@ -4,7 +4,7 @@ from langchain_together import ChatTogether
 from langchain.prompts import PromptTemplate
 
 embedding_function = TogetherEmbeddings(
-    model="BAAI/bge-large-en-v1.5",
+    model="togethercomputer/m2-bert-80M-2k-retrieval",
     api_key=os.getenv("TOGETHER_API_KEY")
 )
 
