@@ -27,6 +27,7 @@ if os.getenv("USE_UNSTRUCTURED_API") == "true":
         client=UnstructuredClient(api_key_auth=os.getenv("UNSTRUCTURED_API_KEY")),
         partition_via_api=True,
         chunking_strategy="by_title",
+        max_characters=1500,
     )
     print("Using Unstructured API")
 else:
@@ -34,6 +35,7 @@ else:
         file_paths,
         post_processors=[clean_extra_whitespace],
         chunking_strategy="by_title",
+        max_characters=1500,
     )
     print("Using Unstructured locally")
 
