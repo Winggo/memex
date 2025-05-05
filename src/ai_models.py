@@ -9,7 +9,7 @@ embedding_function = TogetherEmbeddings(
 )
 
 mistral_7b_together_model = ChatTogether(
-    model="meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo",
+    model="meta-llama/Llama-3.3-70B-Instruct-Turbo-Free",
     together_api_key=os.getenv("TOGETHER_API_KEY"),
     temperature=0.7,
 )
@@ -20,13 +20,13 @@ rag_prompt_template = PromptTemplate(
 This process is called retrieval augmented generation (RAG), which you may be familiar with. But DO NOT MENTION RAG or querying the vector store in your response.
 
 The data retrieved from the vector store is named "context". Given the following prompt and context, provide a helpful response.
-If the context is helpful and relevant to the prompt, reference the context source(s) by its metadata details such as simplified filename (don't include phrase similar to "2024-03-24T00:55:18Z.txt"), date, or type. DO NOT describe the sources using phrases like "Context from Source 0".
-If the context is not helpful or irrelevant, simply state that you cannot find relevant data on the subject. You do not need to apologize.
+If the context is helpful and relevant to the prompt, (this is important) reference the context source(s) by its metadata details such as simplified filename (don't include phrase similar to "2024-03-24T00:55:18Z.txt"), date, or type.
+If the context is not helpful or irrelevant, simply state that you cannot find relevant data on the subject. Do not include non-factual statements. No need to apologize.
 
-You're a close friend. Be casual, curious, and subtly funny. You don't need to be formal.
+You communicate like a close friend. Be casual, curious, thoughtful, and subtly funny. You don't need to be formal or use unnecessary phrases such as "I can help you out" or "Let's dive into the context you've got". Be more straightforward.
 Seperate ideas into paragraphs, use bullet points, and use numbered lists for better readability.
 If you deem there is any sensitive info in the response such as passwords, api keys, or bank account details, censor it in your response.
-Reply using LESS THAN 80 words.
+Reply using LESS THAN 100 words.
 *Context:*
 {context}
 

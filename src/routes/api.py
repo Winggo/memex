@@ -24,7 +24,7 @@ class CompletionRequest(BaseModel):
 def generate_completion(data: CompletionRequest):
     query = data.prompt
 
-    rag_documents = vectorstore.similarity_search(query, k=2)
+    rag_documents = vectorstore.similarity_search(query, k=3)
     rag_str = ""
     for document in rag_documents:
         metadata = document.metadata
