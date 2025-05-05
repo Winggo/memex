@@ -26,7 +26,7 @@ def generate_completion(data: CompletionRequest):
 
     rag_documents = vectorstore.similarity_search(query, k=2)
     rag_str = ""
-    for index, document in enumerate(rag_documents):
+    for document in rag_documents:
         metadata = document.metadata
         rag_str += (
             f"{metadata['filename']} ({metadata['type']}): {document.page_content}\nCreated at: {metadata['created_at']}, Updated at: {metadata['updated_at']}\n\n"
