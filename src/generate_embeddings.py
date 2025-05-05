@@ -5,10 +5,12 @@ from glob import glob
 from unstructured_client import UnstructuredClient
 from langchain_unstructured import UnstructuredLoader
 from unstructured.cleaners.core import clean_extra_whitespace
-from langchain_together import TogetherEmbeddings
-from langchain_community.vectorstores import Chroma
+from langchain_chroma import Chroma
 
 load_dotenv(".env")
+
+from ai_models import embedding_function
+from utils.constants import CHROMA_PATH
 
 
 folder_path = "./data/apple/notes"
@@ -49,13 +51,6 @@ print(f"{len(processed_documents)} documents loaded.")
 
 
 # Generate embeddings and store in vector DB
-embedding_function = TogetherEmbeddings(
-    model="BAAI/bge-large-en-v1.5",
-    api_key=os.getenv("TOGETHER_API_KEY")
-)
-
-
-CHROMA_PATH = os.path.join(os.getcwd(), "chroma_db")
 vectorstore = Chroma.from_documents(
     processed_documents,
     embedding=embedding_function,

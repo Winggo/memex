@@ -28,18 +28,16 @@ Data sources:
 
 ## Architecture
 
-1. Parsing
-    - langchain loaders + unstructured
-2. Chunking & Preprocessing
-    - langchain
-3. Embedding
-    - sentence-transformers (e.g., all-MiniLM-L6-v2)
-4. Vector DB
-    - FAISS
-5. Retriever & RAG Model
-    - mistral, llama, phi2 + langchain
-6. Optional UI
-    - Streamlit / Gradio
+1. Parsing, chunking, preprocessing
+    - langchain + unstructured
+2. Embedding
+    - BAAI/bge-large-en-v1.5 + together.ai
+3. Vector DB
+    - chroma
+4. Retriever & RAG Model
+    - Meta-Llama-3.1-8B-Instruct-Turbo + together.ai
+5. Optional UI
+    - iMessage / streamlit / gradio
 
 
 ## Attribution
