@@ -14,7 +14,7 @@ from routes.api import router as api_router
 @asynccontextmanager
 async def lifespan(server: FastAPI):
     loop = asyncio.get_event_loop()
-    loop.create_task(discord_client.start(os.environ["DISCORD_TOKEN"]))
+    loop.create_task(discord_client.start(os.environ["DISCORD_BOT_TOKEN"]))
     yield
     await discord_client.close()
 

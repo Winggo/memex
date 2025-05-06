@@ -24,6 +24,7 @@ yarn-error.log*
 
 
 .env*
+!.env.example
 venv/
 __pycache__/
 /data
