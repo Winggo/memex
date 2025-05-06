@@ -40,9 +40,12 @@ Data sources:
     - discord / streamlit / gradio
 
 
-## Attribution
+## Usage
 
-This project idea was inspired by this post from Linus: https://x.com/thesephist/status/1629272600156176386
+1. Generate embeddings from data directory, and store them in vector DB Chroma
+    - `python3 src/generate_embeddings.py`
+2. Launch FastAPI server to handle requests between LLM and messaging services
+    - `python3 src/server.py`
 
 
 ## Setup Issues
@@ -60,3 +63,8 @@ Fix: `sudo /Applications/Python\ 3.12/Install\ Certificates.command`
 ##### `pdf2image.exceptions.PDFInfoNotInstalledError: Unable to get page count. Is poppler installed and in PATH?`
 
 Fix: `brew install poppler`
+
+
+## Attribution
+
+This project idea was inspired by this post from Linus: https://x.com/thesephist/status/1629272600156176386
