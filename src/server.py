@@ -1,11 +1,25 @@
+import os
+import asyncio
+from contextlib import asynccontextmanager
+from dotenv import load_dotenv
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+load_dotenv(".env")
+from discord_client import discord_client
 from routes.api import router as api_router
 
 
-server = FastAPI()
+@asynccontextmanager
+async def lifespan(server: FastAPI):
+    loop = asyncio.get_event_loop()
+    loop.create_task(discord_client.start(os.environ["DISCORD_TOKEN"]))
+    yield
+    await discord_client.close()
+
+
+server = FastAPI(lifespan=lifespan)
 origins = []
 server.add_middleware(
     CORSMiddleware,

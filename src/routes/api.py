@@ -1,9 +1,6 @@
-from dotenv import load_dotenv
 from langchain_chroma import Chroma
 from fastapi import APIRouter
 from pydantic import BaseModel
-
-load_dotenv(".env")
 
 from ai_models import embedding_function, mistral_7b_together_model, rag_prompt_template
 from utils.constants import CHROMA_PATH

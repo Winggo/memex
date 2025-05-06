@@ -37,7 +37,7 @@ Data sources:
 4. Retriever & RAG Model
     - Meta-Llama-3.1-8B-Instruct-Turbo + together.ai
 5. Optional UI
-    - iMessage / streamlit / gradio
+    - discord / streamlit / gradio
 
 
 ## Attribution

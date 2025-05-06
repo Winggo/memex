@@ -25,6 +25,7 @@ cryptography==44.0.2
 cycler==0.12.1
 dataclasses-json==0.6.7
 Deprecated==1.2.18
+discord.py==2.5.2
 distro==1.9.0
 dotenv==0.9.9
 durationpy==0.9
