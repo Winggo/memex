@@ -29,15 +29,15 @@ Data sources:
 ## Architecture
 
 1. Parsing, chunking, preprocessing
-    - langchain + unstructured
+    - langchain + unstructured.io
 2. Embedding
     - BAAI/bge-large-en-v1.5 + together.ai
 3. Vector DB
     - chroma
 4. Retriever & RAG Model
-    - Meta-Llama-3.1-8B-Instruct-Turbo + together.ai
+    - togethercomputer/m2-bert-80M-2k-retrieval + together.ai
 5. Optional UI
-    - discord / streamlit / gradio
+    - discord / gradio
 
 
 ## Usage
