@@ -84,7 +84,7 @@ for doc in documents:
         continue
 
     mtdata = get_file_metadata(doc.metadata["source"])
-    type = "/".join(doc.metadata["file_directory"].split("/")[:2])
+    type = "/".join(doc.metadata["file_directory"].split("/")[1:3])
 
     doc.metadata = {
         **doc.metadata,
