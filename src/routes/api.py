@@ -2,7 +2,8 @@ from langchain_chroma import Chroma
 from fastapi import APIRouter
 from pydantic import BaseModel
 
-from ai_models import embedding_function, mistral_7b_together_model, rag_prompt_template
+from ai_models import embedding_function, mistral_7b_together_model
+from rag_engine import rag_prompt_template
 from utils.constants import CHROMA_PATH
 
 
