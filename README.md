@@ -20,7 +20,6 @@ Data sources:
 ## TODO
 - Generate embeddings for other data besides notes
 - Showcase app on other spaces besides discord
-- Open-sourcing repo?
 
 
 ## Implementation Steps
@@ -29,7 +28,7 @@ Data sources:
 2. Data processing: clean, chunk, and generating embeddings
 3. Store embeddings into a vector DB
 4. Leverage an open-source LLM for inference and to perform RAG
-5. Use iMessage as the LLM's user interface
+5. Use Discord or HuggingFace Spaces as the Memex's user interface
 
 
 ## Architecture
