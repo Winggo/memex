@@ -82,16 +82,20 @@ processed_documents = []
 for doc in documents:
     if len(doc.page_content.strip()) < 30:
         continue
+
     mtdata = get_file_metadata(doc.metadata["source"])
+    type = "/".join(doc.metadata["file_directory"].split("/")[:2])
+
     doc.metadata = {
         **doc.metadata,
         **mtdata,
         "languages": ", ".join(doc.metadata["languages"]),
-        "type": "apple/note",
+        "type": type,
     }
     processed_documents.append(doc)
 
 print(f"{len(processed_documents)} documents loaded.")
+
 
 if not dry_run:
     # Generate embeddings and store in vector DB
