@@ -17,6 +17,12 @@ Data sources:
     - Calendar (ics)
 
 
+## TODO
+- Generate embeddings for other data besides notes
+- Showcase app on other spaces besides discord
+- Open-sourcing repo?
+
+
 ## Implementation Steps
 
 1. Download data from sources Google Takeout & iCloud Exports
