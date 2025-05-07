@@ -1,5 +1,7 @@
 import discord
 
+from utils.constants import DISCORD_APP_ID
+
 
 class DiscordClient(discord.Client):
     async def on_ready(self):
@@ -7,6 +9,8 @@ class DiscordClient(discord.Client):
 
     async def on_message(self, message):
         print(f"[Discord] message received from {message.author}")
+        if self.application_id != DISCORD_APP_ID:
+            return
 
 
 intents = discord.Intents.default()
