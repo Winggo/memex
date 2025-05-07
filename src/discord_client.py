@@ -9,7 +9,7 @@ class DiscordClient(discord.Client):
 
     async def on_message(self, message):
         print(f"[Discord] message received from {message.author}")
-        if self.application_id != DISCORD_APP_ID:
+        if self.application_id != DISCORD_APP_ID or message.author.bot:
             return
 
 
