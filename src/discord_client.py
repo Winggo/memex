@@ -1,5 +1,6 @@
 import discord
 
+from rag_engine import respond_with_retrieved_context
 from utils.constants import DISCORD_APP_ID
 
 
@@ -11,6 +12,9 @@ class DiscordClient(discord.Client):
         print(f"[Discord] message received from {message.author}")
         if self.application_id != DISCORD_APP_ID or message.author.bot:
             return
+        
+        completion = respond_with_retrieved_context(message.content)
+        await message.channel.send(completion)
 
 
 intents = discord.Intents.default()
