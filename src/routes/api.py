@@ -1,16 +1,7 @@
-from langchain_chroma import Chroma
 from fastapi import APIRouter
 from pydantic import BaseModel
 
-from ai_models import embedding_function, mistral_7b_together_model
-from rag_engine import rag_prompt_template
-from utils.constants import CHROMA_PATH
-
-
-vectorstore = Chroma(
-    persist_directory=CHROMA_PATH,
-    embedding_function=embedding_function,
-)
+from rag_engine import respond_with_retrieved_context
 
 
 router = APIRouter()
@@ -20,22 +11,4 @@ class CompletionRequest(BaseModel):
 
 @router.post("/api/v1/completion")
 def generate_completion(data: CompletionRequest):
-    query = data.prompt
-
-    rag_documents = vectorstore.similarity_search(query, k=3)
-    rag_str = ""
-    for document in rag_documents:
-        metadata = document.metadata
-        rag_str += (
-            f"{metadata['filename']} ({metadata['type']}): {document.page_content}\nCreated at: {metadata['created_at']}, Updated at: {metadata['updated_at']}\n\n"
-        )
-    print(f"RAG RESULTS: {rag_documents}")
-    print(f"RAG STRING: {rag_str}")
-
-    chain = rag_prompt_template | mistral_7b_together_model
-    llm_response = chain.invoke({
-        "prompt": query,
-        "context": rag_str,
-    })
-
-    return llm_response.content if hasattr(llm_response, 'content') else str(llm_response)
+    return respond_with_retrieved_context(data.prompt)

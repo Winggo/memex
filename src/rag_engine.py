@@ -1,4 +1,14 @@
+from langchain_chroma import Chroma
 from langchain.prompts import PromptTemplate
+
+from ai_models import embedding_function, mistral_7b_together_model
+from utils.constants import CHROMA_PATH
+
+
+vectorstore = Chroma(
+    persist_directory=CHROMA_PATH,
+    embedding_function=embedding_function,
+)
 
 
 rag_prompt_template = PromptTemplate(
@@ -20,3 +30,21 @@ Reply using LESS THAN 200 words.
 *Prompt:*
 {prompt}"""
 )
+
+
+def respond_with_retrieved_context(prompt):
+    rag_documents = vectorstore.similarity_search(prompt, k=3)
+    rag_context = ""
+    for document in rag_documents:
+        metadata = document.metadata
+        rag_context += (
+            f"{metadata['filename']} ({metadata['type']}): {document.page_content}\nCreated at: {metadata['created_at']}, Updated at: {metadata['updated_at']}\n\n"
+        )
+
+    chain = rag_prompt_template | mistral_7b_together_model
+    llm_response = chain.invoke({
+        "prompt": prompt,
+        "context": rag_context,
+    })
+
+    return llm_response.content if hasattr(llm_response, 'content') else str(llm_response)
