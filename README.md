@@ -50,7 +50,7 @@ Data sources:
 
 0. Create `.env` with required env variables (reference `.env.example`)
 1. Generate embeddings from data directory, and store them in vector DB Chroma
-    - `python3 src/scripts/generate_embeddings.py`
+    - `python3 src/scripts/generate_embeddings.py --folder_path ./data --chunking_strategy by_title --chunk_max_characters 1500`
 2. Launch FastAPI server to handle requests between LLM and messaging services
     - `python3 src/server.py`
 
