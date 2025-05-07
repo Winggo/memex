@@ -35,11 +35,11 @@ parser.add_argument(
     "--chunk_max_characters",
     type=int,
     default=1500,
-    path="Max number of characters per chunk"
+    help="Max number of characters per chunk"
 )
 parser.add_argument(
     "--dry_run",
-    action="store_false",
+    action="store_true",
     help="Parse data without generating embeddings and storing in vector DB"
 )
 args = parser.parse_args()
