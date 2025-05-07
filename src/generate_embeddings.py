@@ -1,3 +1,7 @@
+"""
+Script to generate embeddings from /data directory and store in Chroma vector DB
+"""
+
 import os
 from dotenv import load_dotenv
 from glob import glob
@@ -9,8 +13,8 @@ from langchain_chroma import Chroma
 from utils.helpers import get_file_metadata
 
 load_dotenv(".env")
-
 from ai_models import embedding_function
+
 from utils.constants import CHROMA_PATH
 
 
