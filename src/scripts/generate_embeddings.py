@@ -5,13 +5,12 @@ import argparse
 import os
 from dotenv import load_dotenv
 from glob import glob
-from datetime import datetime
 
 from unstructured_client import UnstructuredClient
 from langchain_unstructured import UnstructuredLoader
 from unstructured.cleaners.core import clean_extra_whitespace
 from langchain_chroma import Chroma
-from utils.helpers import get_file_metadata
+from utils.helpers import get_file_metadata, get_date_from_str
 
 load_dotenv(".env")
 from ai_models import embedding_function
@@ -85,7 +84,7 @@ def process_doc(_doc, _file_type):
         type = "/".join(_doc.metadata["file_directory"].split("/")[1:3])
         _doc.metadata = {
             "sent_from": _doc.metadata.get("sent_from"),
-            "last_modified": datetime.fromisoformat(_doc.metadata.get("last_modified")).date().strftime('%Y-%m-%d') if _doc.metadata.get("last_modified") else "",
+            "last_modified": get_date_from_str(_doc.metadata.get("last_modified")),
             "subject": _doc.metadata.get("subject"),
             "type": type,
         }
