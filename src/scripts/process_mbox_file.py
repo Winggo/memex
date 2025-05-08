@@ -10,11 +10,6 @@ import os
 def remove_xml_processing_instructions(text):
     """Remove <?xml...?> and <?php...?> tags in eml files, as it breaks unstructured's parser"""
     patterns = [
-        # r'<\?xml[^>]*>',  # XML processing instructions
-        # r'<xml[^>]*\s*>',   # Self-closing <xml ... />
-        # r'<xml[^>]*>.*?xml[^>]*>',  # Opening <xml> tags, their contents, and closing xml> tags
-        # r'</xml>',
-        # r'<\?php[^>]*?>',
         r'<\?xml[^>]*?>',
         r'<\?php[^>]*?>',
     ]
