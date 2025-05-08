@@ -18,7 +18,7 @@ Data sources:
 
 
 ## TODO
-- Generate embeddings for other data besides notes
+- Generate embeddings for other data besides notes & emails
 - Showcase app on other spaces besides discord
 
 
