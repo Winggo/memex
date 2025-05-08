@@ -5,6 +5,7 @@ import argparse
 import os
 from dotenv import load_dotenv
 from glob import glob
+from datetime import datetime
 
 from unstructured_client import UnstructuredClient
 from langchain_unstructured import UnstructuredLoader
@@ -18,91 +19,151 @@ from ai_models import embedding_function
 from utils.constants import CHROMA_PATH
 
 
-parser = argparse.ArgumentParser(description="Generate embeddings from data directory.")
-parser.add_argument(
-    "--folder_path",
-    type=str,
-    default="./data",
-    help="Path to the folder containing data files"
-)
-parser.add_argument(
-    "--chunking_strategy",
-    type=str,
-    default="by_title",
-    help="Chunking strategy after parsing your files"
-)
-parser.add_argument(
-    "--chunk_max_characters",
-    type=int,
-    default=1500,
-    help="Max number of characters per chunk"
-)
-parser.add_argument(
-    "--dry_run",
-    action="store_true",
-    help="Parse data without generating embeddings and storing in vector DB"
-)
-args = parser.parse_args()
+def get_loader(_file_type, _file_paths, _chunk_max_characters):
+    if os.getenv("USE_UNSTRUCTURED_API") == "true":
+        print("Using Unstructured API")
+        if _file_type == "txt":
+            loader = UnstructuredLoader(
+                _file_paths,
+                post_processors=[clean_extra_whitespace],
+                client=UnstructuredClient(api_key_auth=os.getenv("UNSTRUCTURED_API_KEY")),
+                partition_via_api=True,
+                max_characters=_chunk_max_characters,
+                chunking_strategy="by_title",
+            )
+        elif _file_type == "eml":
+            loader = UnstructuredLoader(
+                _file_paths,
+                post_processors=[clean_extra_whitespace],
+                client=UnstructuredClient(api_key_auth=os.getenv("UNSTRUCTURED_API_KEY")),
+                partition_via_api=True,
+                max_characters=_chunk_max_characters,
+                strategy="fast",
+                process_attachments=True,
+            )
+    else:
+        print("Using Unstructured locally")
+        if _file_type == "txt":
+            loader = UnstructuredLoader(
+                _file_paths,
+                post_processors=[clean_extra_whitespace],
+                max_characters=_chunk_max_characters,
+                chunking_strategy="by_title",
+            )
+        elif _file_type == "eml":
+            loader = UnstructuredLoader(
+                _file_paths,
+                post_processors=[clean_extra_whitespace],
+                max_characters=_chunk_max_characters,
+                strategy="fast",
+                process_attachments=True,
+            )
+    
+    return loader
 
 
-folder_path = args.folder_path
-chunking_strategy = args.chunking_strategy
-chunk_max_characters = args.chunk_max_characters
-dry_run = args.dry_run
+def skip_processing_document(_doc):
+    content = _doc.page_content.strip()
+    if len(content) < 50:
+        return True
+    if len(content) < 100 and "do not reply" in content:
+        return True
+    return False
 
 
-file_paths = [
-    path for path in glob(os.path.join(folder_path, "**/*"), recursive=True)
-    if os.path.isfile(path)
-]
+def process_doc(_doc, _file_type):
+    if _file_type == "txt":
+        mtdata = get_file_metadata(_doc.metadata["source"])
+        type = "/".join(_doc.metadata["file_directory"].split("/")[1:3])
 
-if os.getenv("USE_UNSTRUCTURED_API") == "true":
-    loader = UnstructuredLoader(
-        file_paths,
-        post_processors=[clean_extra_whitespace],
-        client=UnstructuredClient(api_key_auth=os.getenv("UNSTRUCTURED_API_KEY")),
-        partition_via_api=True,
-        chunking_strategy=chunking_strategy,
-        max_characters=chunk_max_characters,
+        _doc.metadata = {
+            **_doc.metadata,
+            **mtdata,
+            "type": type,
+        }
+        del _doc.metadata["languages"]
+
+    elif _file_type == "eml":
+        type = "/".join(_doc.metadata["file_directory"].split("/")[1:3])
+        _doc.metadata = {
+            "sent_from": _doc.metadata.get("sent_from"),
+            "last_modified": datetime.fromisoformat(_doc.metadata.get("last_modified")).date().strftime('%Y-%m-%d') if _doc.metadata.get("last_modified") else "",
+            "subject": _doc.metadata.get("subject"),
+            "type": type,
+        }
+
+    else:
+        raise ValueError(f"Invalid file type: {_file_type}")
+    
+    return _doc
+
+
+
+def main():
+    parser = argparse.ArgumentParser(description="Generate embeddings from data directory.")
+    parser.add_argument(
+        "--folder_path",
+        type=str,
+        default="./data",
+        help="Path to the folder containing data files"
     )
-    print("Using Unstructured API")
-else:
-    loader = UnstructuredLoader(
-        file_paths,
-        post_processors=[clean_extra_whitespace],
-        chunking_strategy=chunking_strategy,
-        max_characters=chunk_max_characters,
+    parser.add_argument(
+        "--file_type",
+        type=str,
+        default="txt",
+        help="Specify file type to parse accordingly"
     )
-    print("Using Unstructured locally")
-
-
-# Parsing, chunking, preprocessing
-documents = loader.load()
-processed_documents = []
-for doc in documents:
-    if len(doc.page_content.strip()) < 30:
-        continue
-
-    mtdata = get_file_metadata(doc.metadata["source"])
-    type = "/".join(doc.metadata["file_directory"].split("/")[1:3])
-
-    doc.metadata = {
-        **doc.metadata,
-        **mtdata,
-        "languages": ", ".join(doc.metadata["languages"]),
-        "type": type,
-    }
-    processed_documents.append(doc)
-
-print(f"{len(processed_documents)} documents loaded.")
-
-
-if not dry_run:
-    # Generate embeddings and store in vector DB
-    vectorstore = Chroma.from_documents(
-        processed_documents,
-        embedding=embedding_function,
-        persist_directory=CHROMA_PATH,
+    parser.add_argument(
+        "--chunk_max_characters",
+        type=int,
+        default=1500,
+        help="Max number of characters per chunk"
     )
+    parser.add_argument(
+        "--dry_run",
+        action="store_true",
+        help="Parse data without generating embeddings and storing in vector DB"
+    )
+    args = parser.parse_args()
 
-    print("Embeddings generated and stored in vector store")
+
+    folder_path = args.folder_path
+    file_type = args.file_type
+    chunk_max_characters = args.chunk_max_characters
+    dry_run = args.dry_run
+
+
+    file_paths = [
+        path for path in glob(os.path.join(folder_path, "**/*"), recursive=True)
+        if os.path.isfile(path)
+    ]
+
+
+    # Parsing, chunking, preprocessing
+    loader = get_loader(file_type, file_paths, chunk_max_characters)
+    documents = loader.load()
+    processed_documents = []
+    for doc in documents:
+        if skip_processing_document(doc):
+            continue
+        processed_doc = process_doc(doc, file_type)
+        processed_documents.append(processed_doc)
+
+    print(f"{len(processed_documents)} documents loaded.")
+
+
+    if dry_run:
+        print(f"Dry run: documents embeddings not stored in DB.")
+        print(processed_documents[0])
+    else:
+        # Generate embeddings and store in vector DB
+        vectorstore = Chroma.from_documents(
+            processed_documents,
+            embedding=embedding_function,
+            persist_directory=CHROMA_PATH,
+        )
+
+        print("Embeddings generated and stored in vector store")
+
+
+main()
