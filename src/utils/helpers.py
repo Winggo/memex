@@ -4,12 +4,19 @@ from datetime import datetime
 
 def get_date_from_str(timestamp: str):
     """Ex timestamp: 'Sun, 01 Dec 2013 23:24::3 -0600'"""
-    date_format = "%a, %d %b %Y %H:%M:%S %z"
-    try:
-        dt = datetime.strptime(timestamp, date_format)
-        return dt.date().isoformat()
-    except:
-        return timestamp
+    date_formats = [
+        "%a, %d %b %Y %H:%M:%S %z",
+        "%Y-%m-%dT%H:%M:%S%z",
+    ]
+
+    for fmt in date_formats:
+        try:
+            dt = datetime.strptime(timestamp, fmt)
+            return dt.date().isoformat()
+        except:
+            continue
+
+    return timestamp
 
 
 def get_date_from_epoch(epoch):
