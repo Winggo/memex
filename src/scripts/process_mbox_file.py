@@ -41,7 +41,9 @@ def main():
     if not args.dry_run:
         email_id = 1
         for message in mbox:
-            if message.get_content_type() == "multipart/mixed":
+            content_type = message.get_content_type()
+            # Unstructured cannot parse many multipart content-types
+            if content_type.startswith("multipart") and content_type != "multipart/alternative":
                 continue
             
             with open(os.path.join(args.output_dir, f"email_{email_id}.eml"), "w", encoding="utf-8") as f:
