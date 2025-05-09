@@ -1,5 +1,11 @@
 """
 Script to generate embeddings from /data directory and store in Chroma vector DB
+
+Notes:
+python3 src/scripts/generate_embeddings.py --folder_path data/apple/notes
+
+Emails:
+python3 src/scripts/generate_embeddings.py --folder_path data/google/gmail/emails --file_type eml
 """
 import argparse
 import os
@@ -82,10 +88,11 @@ def process_doc(_doc, _file_type):
 
     elif _file_type == "eml":
         type = "/".join(_doc.metadata["file_directory"].split("/")[1:3])
+        sent_from = _doc.metadata.get("sent_from", "")
         _doc.metadata = {
-            "sent_from": _doc.metadata.get("sent_from"),
-            "last_modified": get_date_from_str(_doc.metadata.get("last_modified")),
-            "subject": _doc.metadata.get("subject"),
+            "sent_from": str(sent_from) if isinstance(sent_from, list) else sent_from,
+            "last_modified": get_date_from_str(_doc.metadata.get("last_modified", "")),
+            "subject": _doc.metadata.get("subject", ""),
             "type": type,
         }
 
