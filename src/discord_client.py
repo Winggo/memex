@@ -9,10 +9,10 @@ class DiscordClient(discord.Client):
         print(f"[Discord] logged on as {self.user}")
 
     async def on_message(self, message):
-        print(f"[Discord] message received from {message.author}")
         if self.application_id != DISCORD_APP_ID or message.author.bot:
             return
-        
+
+        print(f"[Discord] message received from {message.author}")
         completion = respond_with_retrieved_context(message.content)
         await message.channel.send(completion)
 
