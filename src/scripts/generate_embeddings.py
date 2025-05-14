@@ -111,7 +111,9 @@ def process_doc(_doc, _file_type):
 
     elif _file_type == "csv":
         type = "/".join(_doc.metadata["file_directory"].split("/")[1:3])
-        _doc.metadata["type"] = type
+        _doc.metadata = {
+            "type": type,
+        }
 
     else:
         raise ValueError(f"Invalid file type: {_file_type}")
