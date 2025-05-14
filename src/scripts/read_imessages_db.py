@@ -2,6 +2,13 @@
 Reads the chat.db file found in `~/Library/Messages/chat.db` on macOs to retrieve all iMessages
 Decoding is required to get text from all messages, as some messages are encoded in the attributedBody column
 
+Create imessage.db file on macOS by:
+1. Going to Settings -> Privacy & Security -> Full Disk Access -> Add Terminal to the list
+2. Running `cp ~/Library/Messages/chat.db ./data/apple/messages/imessage.db`
+
+Usage:
+`python3 src/scripts/read_imessages_db.py`
+
 Source: https://www.reddit.com/r/osx/comments/uevy32/texts_are_missing_from_mac_chatdb_file_despite/
 """
 
