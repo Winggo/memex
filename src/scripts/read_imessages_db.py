@@ -22,6 +22,10 @@ import numpy as np
 from typedstream.stream import TypedStreamReader
 
 
+CHUNK_ROW_SIZE = 15
+CHUNK_OVERLAP = 3
+
+
 def convert_apple_timestamp(tstamp):
     jan_2001_timestamp = datetime(2001, 1, 1).timestamp()
     tstamp_in_seconds = tstamp / 1000000000
@@ -72,8 +76,13 @@ def main():
 
         # Save to CSV
         export_columns = ["date", "sender", "recipient", "chat_name", "message"]
-        msg_df[export_columns].to_csv("./data/apple/messages/data/imessage.csv", index=False)
-        print(f"Exported successfully")
+
+        # Chunk with overlap
+        chunks = [msg_df[i:i+CHUNK_ROW_SIZE+CHUNK_OVERLAP] for i in range(0, len(msg_df), CHUNK_ROW_SIZE)]
+        for i, chunk in enumerate(chunks):
+            chunk[export_columns].to_csv(f"./data/apple/messages/data/imessage_{i+1}.csv", index=False)
+
+        print(f"Exported successfully. {len(chunks)} chunks created.")
 
 
 if __name__ == "__main__":
