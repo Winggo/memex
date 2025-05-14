@@ -51,3 +51,7 @@ def remove_image_references(text):
     text = re.sub(r"<img[^>]*>", "", text) # <img src="image_url" />
     
     return text.strip()
+
+
+def normalize_phone_number(phone_number):
+    return phone_number.replace(" ", "").replace("-", "").replace("(", "").replace(")", "")
