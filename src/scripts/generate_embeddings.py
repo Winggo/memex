@@ -11,6 +11,7 @@ Emails:
 python3 src/scripts/generate_embeddings.py --folder_path data/google/gmail/data --file_type eml
 """
 import argparse
+import re
 import os
 from dotenv import load_dotenv
 from glob import glob
@@ -19,7 +20,7 @@ from unstructured_client import UnstructuredClient
 from langchain_unstructured import UnstructuredLoader
 from unstructured.cleaners.core import clean_extra_whitespace
 from langchain_chroma import Chroma
-from utils.helpers import get_file_metadata, get_date_from_str
+from utils.helpers import get_file_metadata, get_date_from_str, remove_image_references
 
 load_dotenv(".env")
 from ai_models import embedding_function
@@ -92,12 +93,15 @@ def process_doc(_doc, _file_type):
         mtdata = get_file_metadata(_doc.metadata["source"])
         type = "/".join(_doc.metadata["file_directory"].split("/")[1:3])
 
+        content = _doc.page_content
+        content = remove_image_references(content)
+        content = re.sub(r'\[{.*?}]', '', content) # remove text like [{type:ADMINISTRATOR,acceptanceStatus:ACCEPTED}]
+        _doc.page_content = content
+
         _doc.metadata = {
-            **_doc.metadata,
             **mtdata,
             "type": type,
         }
-        del _doc.metadata["languages"]
 
     elif _file_type == "eml":
         type = "/".join(_doc.metadata["file_directory"].split("/")[1:3])
