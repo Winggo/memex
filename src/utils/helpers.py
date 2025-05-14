@@ -1,3 +1,4 @@
+import re
 import os
 from datetime import datetime
 
@@ -39,3 +40,14 @@ def get_file_metadata(path):
         return mtdata
     except:
         return {}
+
+
+def remove_image_references(text):
+    """
+    Remove image references from text
+    """
+    text = re.sub(r"!\[.*?\]\(.*?\)", "", text) #![Alt text](image_url)
+    text = re.sub(r"data:image\/[a-zA-Z]+;base64,[^\s'\"]+", "", text) # base64 data
+    text = re.sub(r"<img[^>]*>", "", text) # <img src="image_url" />
+    
+    return text.strip()
