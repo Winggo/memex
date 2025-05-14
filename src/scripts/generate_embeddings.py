@@ -4,6 +4,9 @@ Script to generate embeddings from /data directory and store in Chroma vector DB
 Notes:
 python3 src/scripts/generate_embeddings.py --folder_path data/apple/notes
 
+Messages:
+python3 src/scripts/generate_embeddings.py --folder_path data/apple/messages/data --file_type csv
+
 Emails:
 python3 src/scripts/generate_embeddings.py --folder_path data/google/gmail/data --file_type eml
 """
@@ -45,6 +48,13 @@ def get_loader(_file_type, _file_paths, _chunk_max_characters):
                 max_characters=_chunk_max_characters,
                 process_attachments=True,
             )
+        elif _file_type == "csv":
+            loader = UnstructuredLoader(
+                _file_paths,
+                post_processors=[clean_extra_whitespace],
+                client=UnstructuredClient(api_key_auth=os.getenv("UNSTRUCTURED_API_KEY")),
+                partition_via_api=True,
+            )
     else:
         print("Using Unstructured locally")
         if _file_type == "txt":
@@ -61,6 +71,11 @@ def get_loader(_file_type, _file_paths, _chunk_max_characters):
                 max_characters=_chunk_max_characters,
                 process_attachments=True,
             )
+        elif _file_type == "csv":
+            loader = UnstructuredLoader(
+                _file_paths,
+                post_processors=[clean_extra_whitespace],
+            )
     
     return loader
 
@@ -68,8 +83,6 @@ def get_loader(_file_type, _file_paths, _chunk_max_characters):
 def skip_processing_document(_doc):
     content = _doc.page_content.strip()
     if len(content) < 50:
-        return True
-    if len(content) < 100 and "do not reply" in content:
         return True
     return False
 
@@ -95,6 +108,10 @@ def process_doc(_doc, _file_type):
             "subject": _doc.metadata.get("subject", ""),
             "type": type,
         }
+
+    elif _file_type == "csv":
+        type = "/".join(_doc.metadata["file_directory"].split("/")[1:3])
+        _doc.metadata["type"] = type
 
     else:
         raise ValueError(f"Invalid file type: {_file_type}")
