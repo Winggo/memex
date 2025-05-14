@@ -5,7 +5,7 @@ Notes:
 python3 src/scripts/generate_embeddings.py --folder_path data/apple/notes
 
 Emails:
-python3 src/scripts/generate_embeddings.py --folder_path data/google/gmail/emails --file_type eml
+python3 src/scripts/generate_embeddings.py --folder_path data/google/gmail/data --file_type eml
 """
 import argparse
 import os
