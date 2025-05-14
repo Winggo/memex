@@ -33,12 +33,13 @@ Reply using LESS THAN 200 words.
 
 
 def respond_with_retrieved_context(prompt):
-    rag_documents = vectorstore.similarity_search(prompt, k=3)
+    rag_documents = vectorstore.similarity_search(prompt, k=5)
+
     rag_context = ""
     for document in rag_documents:
         metadata = document.metadata
         rag_context += (
-            f"{metadata['filename']} ({metadata['type']}): {document.page_content}\nCreated at: {metadata['created_at']}, Updated at: {metadata['updated_at']}\n\n"
+            f"Content: {document.page_content}\nContent metadata: {metadata}\n\n"
         )
 
     chain = rag_prompt_template | mistral_7b_together_model
