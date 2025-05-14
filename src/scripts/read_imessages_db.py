@@ -72,7 +72,7 @@ def main():
 
         # Save to CSV
         export_columns = ["date", "sender", "recipient", "chat_name", "message"]
-        msg_df[export_columns].to_csv("./data/apple/messages/data/imessage.csv")
+        msg_df[export_columns].to_csv("./data/apple/messages/data/imessage.csv", index=False)
         print(f"Exported successfully")
 
 
