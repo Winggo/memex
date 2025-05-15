@@ -11,5 +11,6 @@ __pycache__/
 .env*
 venv/
 __pycache__/
-/data
-/example_data
+data/
+chroma_db/
+example_data/

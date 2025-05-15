@@ -28,5 +28,6 @@ yarn-error.log*
 !.env.example
 venv/
 __pycache__/
-/data
-/chroma_db/
+data/
+chroma_db/
+example_data/
