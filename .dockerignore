@@ -1,0 +1,15 @@
+fly.toml
+.git/
+__pycache__/
+.envrc
+.venv/
+
+.DS_Store
+*.pem
+.ropeproject/
+
+.env*
+venv/
+__pycache__/
+/data
+/example_data
