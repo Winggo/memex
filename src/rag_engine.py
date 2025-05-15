@@ -13,7 +13,7 @@ vectorstore = Chroma(
 
 determine_query_type_template = PromptTemplate(
     input_variables=["prompt"],
-    template="""Given the prompt, determine what kind of data (notes, messages, and contacts) would be most helpful in answering it.
+    template="""Given the prompt, determine what kind of data (notes, messages, contacts, and maps) would be most helpful in answering it.
 
 Respond using 1 sentence or less, and DO NOT mention "RAG", "querying", or "vector store".
 
