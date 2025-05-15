@@ -135,6 +135,7 @@ def main():
     parser.add_argument(
         "--folder_path",
         type=str,
+        required=True,
         help="Path to the folder containing data files"
     )
     parser.add_argument(
