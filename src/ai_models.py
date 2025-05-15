@@ -8,8 +8,14 @@ embedding_function = TogetherEmbeddings(
     api_key=os.getenv("TOGETHER_API_KEY")
 )
 
-mistral_7b_together_model = ChatTogether(
+nous_hermes_model = ChatTogether(
     model="NousResearch/Nous-Hermes-2-Mixtral-8x7B-DPO",
     together_api_key=os.getenv("TOGETHER_API_KEY"),
-    temperature=0.7,
+    temperature=0.4,
+)
+
+mistral_7b_together_model = ChatTogether(
+    model="mistralai/Mistral-7B-Instruct-v0.3",
+    together_api_key=os.getenv("TOGETHER_API_KEY"),
+    temperature=0,
 )
