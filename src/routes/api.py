@@ -3,7 +3,7 @@ import os
 from fastapi import APIRouter, Request, HTTPException
 from pydantic import BaseModel
 
-from rag_engine import respond_with_retrieved_context
+from src.rag_engine import respond_with_retrieved_context
 
 
 router = APIRouter()

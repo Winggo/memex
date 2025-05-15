@@ -20,8 +20,6 @@ import pandas as pd
 import numpy as np
 from typedstream.stream import TypedStreamReader
 
-from utils.helpers import normalize_phone_number
-
 
 CHUNK_ROW_SIZE = 15
 CHUNK_OVERLAP = 3

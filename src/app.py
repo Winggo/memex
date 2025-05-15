@@ -7,8 +7,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 load_dotenv(".env")
-from discord_client import discord_client
-from routes.api import router as api_router
+from src.discord_client import discord_client
+from src.routes.api import router as api_router
 
 
 @asynccontextmanager

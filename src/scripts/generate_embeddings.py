@@ -27,12 +27,12 @@ from unstructured_client import UnstructuredClient
 from langchain_unstructured import UnstructuredLoader
 from unstructured.cleaners.core import clean_extra_whitespace
 from langchain_chroma import Chroma
-from utils.helpers import get_file_metadata, get_date_from_str, remove_image_references
+from src.utils.helpers import get_file_metadata, get_date_from_str, remove_image_references
 
 load_dotenv(".env")
-from ai_models import embedding_function
+from src.ai_models import embedding_function
 
-from utils.constants import CHROMA_PATH
+from src.utils.constants import CHROMA_PATH
 
 
 def get_loader(_file_type, _file_paths, _chunk_max_characters):
