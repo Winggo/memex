@@ -1,3 +1,5 @@
+import os
+
 from fastapi import APIRouter, Request, HTTPException
 from pydantic import BaseModel
 
@@ -12,7 +14,7 @@ class CompletionRequest(BaseModel):
 @router.post("/api/v1/completion")
 def generate_completion(data: CompletionRequest, request: Request):
     client_ip = request.client.host
-    if client_ip != "127.0.0.1":
+    if client_ip != "127.0.0.1" or os.environ.get("ENABLE_REST_API") != "true":
         raise HTTPException(status_code=403, detail="Forbidden")
 
     return respond_with_retrieved_context(data.prompt)
