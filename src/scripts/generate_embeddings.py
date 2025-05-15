@@ -10,6 +10,9 @@ python3 src/scripts/generate_embeddings.py --folder_path data/apple/contacts/dat
 Messages:
 python3 src/scripts/generate_embeddings.py --folder_path data/apple/messages/data --file_type csv
 
+Maps:
+python3 src/scripts/generate_embeddings.py --folder_path data/google/maps --file_type csv --data_type gmaps
+
 Emails:
 python3 src/scripts/generate_embeddings.py --folder_path data/google/gmail/data --file_type eml
 """
@@ -92,7 +95,7 @@ def skip_processing_document(_doc):
     return False
 
 
-def process_doc(_doc, _file_type):
+def process_doc(_doc, _file_type, _data_type=None):
     if _file_type == "txt":
         mtdata = get_file_metadata(_doc.metadata["source"])
         type = "/".join(_doc.metadata["file_directory"].split("/")[1:3])
@@ -119,9 +122,16 @@ def process_doc(_doc, _file_type):
 
     elif _file_type == "csv":
         type = "/".join(_doc.metadata["file_directory"].split("/")[1:3])
+        metadata = _doc.metadata
         _doc.metadata = {
             "type": type,
         }
+
+        if _data_type == "gmaps":
+            location = metadata["filename"].split(".")[0]
+            _doc.page_content = f"Maps Location: {location}\n{_doc.page_content}"
+            _doc.metadata["location"] = location
+            _doc.metadata["last_modified"] = metadata["last_modified"].split("T")[0]
 
     else:
         raise ValueError(f"Invalid file type: {_file_type}")
@@ -155,6 +165,11 @@ def main():
         action="store_true",
         help="Parse data without generating embeddings and storing in vector DB"
     )
+    parser.add_argument(
+        "--data_type",
+        type=str,
+        help="Type of data to process ('gmaps')"
+    )
     args = parser.parse_args()
 
 
@@ -177,7 +192,7 @@ def main():
     for doc in documents:
         if skip_processing_document(doc):
             continue
-        processed_doc = process_doc(doc, file_type)
+        processed_doc = process_doc(doc, file_type, args.data_type)
         processed_documents.append(processed_doc)
 
     print(f"{len(processed_documents)} documents loaded.")
