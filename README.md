@@ -38,7 +38,7 @@ Data sources:
     - mistralai/Mistral-7B-Instruct-v0.3
     - NousResearch/Nous-Hermes-2-Mixtral-8x7B-DPO
 5. Optional UI
-    - discord / gradio
+    - discord / imessage / gradio
 6. Backend hosting
     - fly.io
 
@@ -92,6 +92,11 @@ Fix: `sudo /Applications/Python\ 3.12/Install\ Certificates.command`
 ##### `pdf2image.exceptions.PDFInfoNotInstalledError: Unable to get page count. Is poppler installed and in PATH?`
 
 Fix: `brew install poppler`
+
+
+## Docs
+
+- BlueBubbles for iMessage API reference: https://documenter.getpostman.com/view/765844/UV5RnfwM#0d8e0e67-fa3b-4446-aa2c-062dca2ce4cd
 
 
 ## Attribution
