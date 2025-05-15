@@ -6,7 +6,6 @@ Usage:
 
 """
 import os
-import json
 from glob import glob
 import vobject
 
@@ -59,12 +58,15 @@ def main():
 
             contact_str = ""
             for k, v in contact_info.items():
-                contact_str += f"{k}: {v}\n"
+                if k == "name":
+                    contact_str += f"Contact info for {v}\n"
+                else:
+                    contact_str += f"{k}: {v}\n"
             contacts.append(contact_str)
 
 
     for i, contact in enumerate(contacts):
-        with open(os.path.join("data/apple/contacts/data", f"contact_{i}.txt"), "w", encoding="utf-8") as new_file:
+        with open(os.path.join("data/apple/contacts/data", f"contact_{i+1}.txt"), "w", encoding="utf-8") as new_file:
             new_file.write(contact)
 
     print(f"Processed {len(contacts)} contacts successfully")
