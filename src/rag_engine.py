@@ -1,7 +1,7 @@
 from langchain_chroma import Chroma
 from langchain.prompts import PromptTemplate
 
-from ai_models import embedding_function, mistral_7b_together_model, nous_hermes_model
+from ai_models import embedding_function, llama_3_70b_free_together_model_creative, llama_3_70b_free_together_model_deterministic
 from utils.constants import CHROMA_PATH
 
 
@@ -21,7 +21,7 @@ Respond using 1 sentence or less, and DO NOT mention "RAG", "querying", or "vect
 )
 
 def determine_query_type(prompt):
-    chain = determine_query_type_template | mistral_7b_together_model
+    chain = determine_query_type_template | llama_3_70b_free_together_model_deterministic
     llm_response = chain.invoke({"prompt": prompt})
     return llm_response.content if hasattr(llm_response, 'content') else str(llm_response)
 
@@ -57,7 +57,7 @@ def respond_with_retrieved_context(prompt):
             f"Content: {document.page_content}\nContent metadata: {metadata}\n\n"
         )
 
-    chain = rag_prompt_template | nous_hermes_model
+    chain = rag_prompt_template | llama_3_70b_free_together_model_creative
     llm_response = chain.invoke({
         "prompt": prompt,
         "context": rag_context,
