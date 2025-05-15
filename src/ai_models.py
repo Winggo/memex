@@ -23,7 +23,7 @@ mistral_7b_together_model = ChatTogether(
 llama_3_70b_free_together_model_creative = ChatTogether(
     model="meta-llama/Llama-3.3-70B-Instruct-Turbo-Free",
     together_api_key=os.getenv("TOGETHER_API_KEY"),
-    temperature=0,
+    temperature=0.4,
 )
 
 llama_3_70b_free_together_model_deterministic = ChatTogether(
