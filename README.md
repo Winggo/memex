@@ -43,6 +43,8 @@ Data sources:
     - togethercomputer/m2-bert-80M-2k-retrieval + together.ai
 5. Optional UI
     - discord / gradio
+6. Backend hosting
+    - fly.io
 
 
 ## Usage
