@@ -13,7 +13,7 @@ vectorstore = Chroma(
 
 determine_query_type_template = PromptTemplate(
     input_variables=["prompt"],
-    template="""Given the prompt, determine what kind of data (notes, messages, contacts, and maps) would be most helpful in answering it.
+    template="""Given the prompt, determine what kind of data (notes, messages, contacts, and maps) would be most helpful in answering it. Only suggest one type of data.
 
 Respond using 1 sentence or less, and DO NOT mention "RAG", "querying", or "vector store".
 
@@ -46,9 +46,7 @@ Reply using LESS THAN 200 words.
 )
 
 def respond_with_retrieved_context(prompt):
-    rag_query = determine_query_type(prompt)
-
-    rag_documents = vectorstore.similarity_search(rag_query, k=8)
+    rag_documents = vectorstore.similarity_search(prompt, k=8)
 
     rag_context = ""
     for document in rag_documents:
