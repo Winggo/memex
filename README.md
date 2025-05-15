@@ -56,6 +56,31 @@ Data sources:
     - `python3 src/app.py`
 
 
+## Deployment
+
+To deploy onto fly.io:
+1. `fly auth login`
+2. `fly deploy` (`fly launch` if first time)
+    - volume should be provisioned alongside
+3. Transfer local chroma_db data into volume
+    1. Copy sqlite3 file
+        1. `fly ssh sftp shell`
+        2. `put ./chroma_db/chroma.sqlite3 /chroma_db/chroma.sqlite3`
+        3. exit
+    2. Create `36e27b04-a9...` directory
+        1. `fly ssh console`
+        2. `mkdir -p /chroma_db/36e27b04-a9...`
+        3. exit
+    3. Copy remaining files
+        1. `fly ssh sftp shell`
+        2. `put ./chroma_db/…/data_level0.bin`
+        3. repeat
+
+If connection lost:
+1) restart machine on fly.io dashboard OR
+2) exit and then `fly ssh sftp shell`
+
+
 ## Setup Issues
 
 ##### Upon executing `python3 src/generate_embeddings.py`, if you encounter the following error:
