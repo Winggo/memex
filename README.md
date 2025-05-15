@@ -56,7 +56,7 @@ Data sources:
 
 ## Setup Issues
 
-##### Upon executing `python3 src/parsing.py`, if you encounter the following error:
+##### Upon executing `python3 src/generate_embeddings.py`, if you encounter the following error:
 ```
 [nltk_data] Error loading punkt_tab: <urlopen error [SSL:
 [nltk_data]     CERTIFICATE_VERIFY_FAILED] certificate verify failed:
