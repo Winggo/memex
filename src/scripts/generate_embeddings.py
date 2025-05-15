@@ -7,9 +7,13 @@ python3 src/scripts/generate_embeddings.py --folder_path data/apple/notes
 Messages:
 python3 src/scripts/generate_embeddings.py --folder_path data/apple/messages/data --file_type csv
 
+Contacts:
+python3 src/scripts/generate_embeddings.py --folder_path data/apple/contacts/data --file_type txt
+
 Emails:
 python3 src/scripts/generate_embeddings.py --folder_path data/google/gmail/data --file_type eml
 """
+
 import argparse
 import re
 import os
