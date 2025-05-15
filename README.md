@@ -17,18 +17,13 @@ Data sources:
     - Calendar (ics)
 
 
-## TODO
-- Generate embeddings for other data besides Apple notes/contacts/messages, Google Maps
-- Showcase app on other spaces besides Discord
-
-
 ## Implementation Steps
 
 1. Download data from sources Google Takeout & iCloud Exports
 2. Data processing: clean, chunk, and generating embeddings
 3. Store embeddings into a vector DB
 4. Leverage an open-source LLM for inference and to perform RAG
-5. Use Discord or HuggingFace Spaces as the Memex's user interface
+5. Use Discord or another app to serve as Memex's UI
 
 
 ## Architecture
@@ -36,11 +31,12 @@ Data sources:
 1. Parsing, chunking, preprocessing
     - langchain + unstructured.io
 2. Embedding
-    - BAAI/bge-large-en-v1.5 + together.ai
+    - togethercomputer/m2-bert-80M-2k-retrieval + together.ai
 3. Vector DB
     - chroma
 4. Retriever & RAG Model
-    - togethercomputer/m2-bert-80M-2k-retrieval + together.ai
+    - mistralai/Mistral-7B-Instruct-v0.3
+    - NousResearch/Nous-Hermes-2-Mixtral-8x7B-DPO
 5. Optional UI
     - discord / gradio
 6. Backend hosting
