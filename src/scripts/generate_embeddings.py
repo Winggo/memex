@@ -165,7 +165,7 @@ def main():
 
 
     file_paths = [
-        path for path in glob(os.path.join(folder_path, "**/*"), recursive=True)
+        path for path in glob(os.path.join(folder_path, f"**/*.{file_type}"), recursive=True)
         if os.path.isfile(path)
     ]
 
