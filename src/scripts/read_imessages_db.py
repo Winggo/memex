@@ -11,13 +11,11 @@ Usage:
 
 Source: https://www.reddit.com/r/osx/comments/uevy32/texts_are_missing_from_mac_chatdb_file_despite/
 """
-import argparse
 import os
 import os.path
 import sqlite3
 from datetime import datetime
 
-import Contacts
 import pandas as pd
 import numpy as np
 from typedstream.stream import TypedStreamReader
@@ -46,46 +44,6 @@ def decode_message_attributedbody(data):
         # The first bytes object is the one we want
         if type(event) is bytes:
             return event.decode("utf-8")
-        
-
-def request_contacts_access():
-    contacts_store = Contacts.CNContactStore.alloc().init()
-
-    def completion(granted, error):
-        print(f"Access granted: {granted}")
-        if error:
-            print(f"Access error: {error}")
-
-    contacts_store.requestAccessForEntityType_completionHandler_(0, completion)
-        
-
-def get_contacts_lookup():
-    contacts_store = Contacts.CNContactStore.alloc().init()
-
-    keys = [
-        Contacts.CNContactPhoneNumbersKey,
-        Contacts.CNContactEmailAddressesKey,
-        Contacts.CNContactGivenNameKey,
-        Contacts.CNContactFamilyNameKey
-    ]
-    request = Contacts.CNContactFetchRequest.alloc().initWithKeysToFetch_(keys)
-    lookup = {}
-
-    def handler(contact, _):
-        full_name = f"{contact.givenName()} {contact.familyName()}".strip()
-        if not full_name:
-            return True
-
-        for phone in contact.phoneNumbers():
-            normalized = normalize_phone_number(str(phone.value().stringValue()))
-            lookup[normalized] = full_name
-        for email in contact.emailAddresses():
-            lookup[str(email.value)] = full_name
-
-        return True
-    
-    contacts_store.enumerateContactsWithFetchRequest_error_usingBlock_(request, None, handler)
-    return lookup
 
 
 def main():
@@ -111,20 +69,10 @@ def main():
         print(f"Messages processed: {len(msg_df)}")
         msg_df = msg_df.drop(columns=["attributedBody"])
 
-        contacts_lookup = get_contacts_lookup()
-
-        def resolve_contact(recipient_sender_id):
-            if not isinstance(recipient_sender_id, str):
-                return recipient_sender_id
-            
-            normalized = normalize_phone_number(recipient_sender_id)
-            return contacts_lookup.get(normalized, recipient_sender_id)
-
-
         # Data trasformation
         msg_df["date"] = msg_df["date"].apply(convert_apple_timestamp)
-        msg_df["sender"] = np.where(msg_df["is_from_me"] == 1, "me", msg_df["sender_or_recipient_id"].apply(resolve_contact))
-        msg_df["recipient"] = np.where(msg_df["is_from_me"] == 0, "me", msg_df["sender_or_recipient_id"].apply(resolve_contact))
+        msg_df["sender"] = np.where(msg_df["is_from_me"] == 1, "me", msg_df["sender_or_recipient_id"])
+        msg_df["recipient"] = np.where(msg_df["is_from_me"] == 0, "me", msg_df["sender_or_recipient_id"])
         msg_df["message"] = msg_df["text"]
 
         # Save to CSV
@@ -139,15 +87,4 @@ def main():
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Read imessage.db file and generate CSV files")
-    parser.add_argument(
-        "--request_contacts_access",
-        action="store_true",
-        help="Request contacts access on macOS"
-    )
-    args = parser.parse_args()
-
-    if args.request_contacts_access:
-        request_contacts_access()
-
     main()
