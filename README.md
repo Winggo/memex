@@ -18,8 +18,8 @@ Data sources:
 
 
 ## TODO
-- Generate embeddings for other data besides notes & messages
-- Showcase app on other spaces besides discord
+- Generate embeddings for other data besides Apple notes/contacts/messages, Google Maps
+- Showcase app on other spaces besides Discord
 
 
 ## Implementation Steps
