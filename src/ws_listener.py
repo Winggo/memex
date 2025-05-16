@@ -21,8 +21,6 @@ def test_socketio_handshake():
 
 
 sio = socketio.AsyncClient(
-    reconnection=False,
-    logger=True,
     engineio_logger=True,
 )
 
