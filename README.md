@@ -29,18 +29,18 @@ Data sources:
 ## Architecture
 
 1. Parsing, chunking, preprocessing
-    - langchain + unstructured.io
+    - Langchain + Unstructured.io
 2. Embedding
-    - togethercomputer/m2-bert-80M-2k-retrieval + together.ai
+    - togethercomputer/m2-bert-80M-2k-retrieval + Together.ai
 3. Vector DB
-    - chroma
+    - Chroma
 4. Retriever & RAG Model
     - mistralai/Mistral-7B-Instruct-v0.3
     - NousResearch/Nous-Hermes-2-Mixtral-8x7B-DPO
 5. Optional UI
-    - discord / imessage / gradio
+    - Discord / iMessage (using BlueBubbles) / Gradio
 6. Backend hosting
-    - fly.io
+    - Fly.io
 
 
 ## Usage
