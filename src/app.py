@@ -9,15 +9,21 @@ from fastapi.middleware.cors import CORSMiddleware
 load_dotenv(".env")
 from src.discord_client import discord_client
 from src.routes.api import router as api_router
+from src.ws_listener import start_ws_listener
 
 
 @asynccontextmanager
 async def lifespan(server: FastAPI):
     loop = asyncio.get_event_loop()
+
     if os.environ.get("ENABLE_DISCORD_CLIENT") == "true":
         loop.create_task(discord_client.start(os.environ["DISCORD_BOT_TOKEN"]))
 
+    if os.environ.get("ENABLE_WEBSOCKET_LISTENER") == "true":
+        loop.create_task(start_ws_listener())
+
     yield
+
     if os.environ.get("ENABLE_DISCORD_CLIENT") == "true":
         await discord_client.close()
 
