@@ -7,7 +7,7 @@ from pydantic import BaseModel
 from src.rag_engine import respond_with_retrieved_context
 
 
-BLUEBUBBLES_URL = os.environ["BLUEBUBBLES_URL"]
+BLUEBUBBLES_URL = f"http://localhost:{os.environ['BLUEBUBBLES_PORT']}"
 BLUEBUBBLES_TOKEN = os.environ["BLUEBUBBLES_TOKEN"]
 IMESSAGE_PHONE_NUMBER = os.environ["IMESSAGE_PHONE_NUMBER"]
 
