@@ -48,11 +48,9 @@ async def start_ws_listener():
     if not handshake_success:
         print("[Websocket] Handshake failed. Exiting.")
         return
-    else:
-        print("[Websocket] Handshake successful. Connecting to websocket.")
-
 
     socket_url = f"{BLUEBUBBLES_WS_URL}/socket.io/?password={BLUEBUBBLES_TOKEN}&EIO=4"
+    print(f"[Websocket] Connecting to {socket_url}")
 
     try:
         await sio.connect(
