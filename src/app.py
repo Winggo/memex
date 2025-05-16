@@ -14,9 +14,12 @@ from src.routes.api import router as api_router
 @asynccontextmanager
 async def lifespan(server: FastAPI):
     loop = asyncio.get_event_loop()
-    loop.create_task(discord_client.start(os.environ["DISCORD_BOT_TOKEN"]))
+    if os.environ.get("ENABLE_DISCORD_CLIENT") == "true":
+        loop.create_task(discord_client.start(os.environ["DISCORD_BOT_TOKEN"]))
+
     yield
-    await discord_client.close()
+    if os.environ.get("ENABLE_DISCORD_CLIENT") == "true":
+        await discord_client.close()
 
 
 server = FastAPI(lifespan=lifespan)
