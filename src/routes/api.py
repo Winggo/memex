@@ -32,6 +32,8 @@ def send_imessaage(data: CompletionRequest, request: Request):
     client_ip = request.client.host
     if client_ip != "127.0.0.1" or os.environ.get("ENABLE_REST_API") != "true":
         raise HTTPException(status_code=403, detail="Forbidden")
+    
+    completion = respond_with_retrieved_context(data.prompt)
 
     headers = {
         "Content-Type": "application/json",
@@ -41,7 +43,7 @@ def send_imessaage(data: CompletionRequest, request: Request):
     }
     payload = {
         "addresses": [IMESSAGE_PHONE_NUMBER],
-        "message": data.prompt
+        "message": completion,
     }
 
     try:
