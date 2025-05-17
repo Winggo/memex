@@ -10,8 +10,8 @@ BLUEBUBBLES_HTTP_URL = f"http://localhost:{os.environ['BLUEBUBBLES_PORT']}"
 BLUEBUBBLES_WS_URL = f"ws://localhost:{os.environ['BLUEBUBBLES_PORT']}"
 BLUEBUBBLES_TOKEN = os.environ["BLUEBUBBLES_TOKEN"]
 IMESSAGE_PHONE_NUMBER = os.environ["IMESSAGE_PHONE_NUMBER"]
-IMESSAGE_EMAIL = os.environ["IMESSAGE_EMAIL"]
-IMESSAGE_EMAILS = os.environ.get("IMESSAGE_EMAILS", []).split(",")
+IMESSAGE_EMAILS = os.environ["IMESSAGE_EMAILS"].split(",") if os.environ.get("IMESSAGE_EMAILS") else []
+
 VALID_ADDRESSES = [*IMESSAGE_EMAILS]
 
 
