@@ -3,7 +3,7 @@ import os
 import requests
 
 
-BLUEBUBBLES_HTTP_URL = f"http://127.0.0.1:{os.environ['BLUEBUBBLES_PORT']}"
+BLUEBUBBLES_HTTP_URL = f"http://127.0.0.1:{os.environ.get(['BLUEBUBBLES_PORT']}"
 BLUEBUBBLES_WS_URL = f"ws://127.0.0.1:{os.environ['BLUEBUBBLES_PORT']}"
 BLUEBUBBLES_TOKEN = os.environ["BLUEBUBBLES_TOKEN"]
 IMESSAGE_PHONE_NUMBER = os.environ["IMESSAGE_PHONE_NUMBER"]
@@ -20,9 +20,7 @@ def test_socketio_handshake():
         return False
 
 
-sio = socketio.AsyncClient(
-    engineio_logger=True,
-)
+sio = socketio.AsyncClient()
 
 @sio.event
 async def connect():
