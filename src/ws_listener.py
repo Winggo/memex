@@ -31,7 +31,7 @@ async def connect():
     print("[Websocket] Connected to websocket")
 
 @sio.event
-async def disconnect(reason):
+async def disconnect(reason=None):
     print(f"[Websocket] Disconnected from websocket. Reason: {reason}")
 
 @sio.on("new-message")
@@ -71,11 +71,7 @@ async def handle_incoming_message(data):
         if res.status_code != 200:
             raise HTTPException(status_code=500, detail="Sending iMessage failed. Please ensure the messaging server is running.")
 
-        return {
-            "status": 200,
-            "phone": IMESSAGE_PHONE_NUMBER,
-            "prompt": parsed_data["message"],
-        }
+        print(f"[Websocket] Completion message sent: {res.status_code}")
     except Exception as e:
         raise HTTPException(status_code=500, detail="Sending iMessage failed. Please ensure the messaging server is running.")
 
