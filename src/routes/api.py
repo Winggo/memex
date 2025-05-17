@@ -10,7 +10,7 @@ from src.utils.constants import MEMEX_MESSAGE_MARKER
 
 BLUEBUBBLES_URL = f"http://localhost:{os.environ['BLUEBUBBLES_PORT']}"
 BLUEBUBBLES_TOKEN = os.environ["BLUEBUBBLES_TOKEN"]
-IMESSAGE_EMAIL = os.environ["IMESSAGE_EMAIL"]
+IMESSAGE_RECIPIENT = os.environ["IMESSAGE_RECIPIENT"]
 
 
 router = APIRouter()
@@ -43,7 +43,7 @@ def send_imessaage(data: CompletionRequest, request: Request):
         "token": BLUEBUBBLES_TOKEN,
     }
     payload = {
-        "addresses": [IMESSAGE_EMAIL],
+        "addresses": [IMESSAGE_RECIPIENT],
         "message": completion + MEMEX_MESSAGE_MARKER,
     }
 
@@ -58,7 +58,7 @@ def send_imessaage(data: CompletionRequest, request: Request):
         
         return {
             "status": 200,
-            "contact": IMESSAGE_EMAIL,
+            "contact": IMESSAGE_RECIPIENT,
             "prompt": data.prompt,
         }
 

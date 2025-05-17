@@ -10,7 +10,8 @@ from src.utils.constants import MEMEX_MESSAGE_MARKER
 BLUEBUBBLES_HTTP_URL = f"http://localhost:{os.environ['BLUEBUBBLES_PORT']}"
 BLUEBUBBLES_WS_URL = f"ws://localhost:{os.environ['BLUEBUBBLES_PORT']}"
 BLUEBUBBLES_TOKEN = os.environ["BLUEBUBBLES_TOKEN"]
-IMESSAGE_EMAIL = os.environ["IMESSAGE_EMAIL"]
+VALID_IMESSAGE_SENDERS = os.environ["VALID_IMESSAGE_SENDERS"].split(",")
+IMESSAGE_RECIPIENT = os.environ["IMESSAGE_RECIPIENT"]
 
 
 def test_socketio_handshake():
@@ -41,14 +42,21 @@ async def handle_incoming_message(data):
         "service": data.get("handle", {}).get("service"),
         "address": data.get("handle", {}).get("address"),
         "message": data.get("text"),
+        "chats": data.get("chats"),
     }
-    
+
     if (
         parsed_data["service"] != "iMessage" or
-        parsed_data["address"] != IMESSAGE_EMAIL or
         not data.get("isFromMe") or
         not isinstance(parsed_data["message"], str) or
         parsed_data["message"].endswith(MEMEX_MESSAGE_MARKER) # ignore message sent by itself
+    ):
+        return
+    
+    if (
+        parsed_data["address"] not in VALID_IMESSAGE_SENDERS or
+        len(parsed_data["chats"] or []) == 0 or
+        parsed_data["chats"][0].get("chatIdentifier") != IMESSAGE_RECIPIENT
     ):
         return
     
@@ -64,7 +72,7 @@ async def handle_incoming_message(data):
                 "token": BLUEBUBBLES_TOKEN,
             },
             json={
-                "addresses": [IMESSAGE_EMAIL],
+                "addresses": [IMESSAGE_RECIPIENT],
                 "message": completion + MEMEX_MESSAGE_MARKER,
             }
         )
