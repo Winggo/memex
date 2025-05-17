@@ -55,7 +55,7 @@ async def handle_incoming_message(data):
 
     try:
         res = requests.post(
-            BLUEBUBBLES_HTTP_URL,
+            f"{BLUEBUBBLES_HTTP_URL}/api/v1/chat/new",
             headers={
                 "Content-Type": "application/json",
             },
@@ -68,7 +68,9 @@ async def handle_incoming_message(data):
             }
         )
 
-        print(f"[Websocket] Response message sent")
+        if res.status_code != 200:
+            raise HTTPException(status_code=500, detail="Sending iMessage failed. Please ensure the messaging server is running.")
+
         return {
             "status": 200,
             "phone": IMESSAGE_PHONE_NUMBER,
