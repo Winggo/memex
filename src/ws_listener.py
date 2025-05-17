@@ -39,6 +39,8 @@ async def disconnect(reason=None):
 @sio.on("new-message")
 async def handle_incoming_message(data):
     print(f"[Websocket] Message received: {data}")
+    if not data:
+        return
     parsed_data = {
         "service": data.get("handle", {}).get("service"),
         "address": data.get("handle", {}).get("address"),
