@@ -4,6 +4,7 @@ import os
 from fastapi import HTTPException
 
 from src.rag_engine import respond_with_retrieved_context
+from src.utils.constants import MEMEX_MESSAGE_MARKER
 
 
 BLUEBUBBLES_HTTP_URL = f"http://localhost:{os.environ['BLUEBUBBLES_PORT']}"
@@ -47,7 +48,7 @@ async def handle_incoming_message(data):
         parsed_data["address"] != IMESSAGE_EMAIL or
         not data.get("isFromMe") or
         not isinstance(parsed_data["message"], str) or
-        parsed_data["message"] == ""
+        parsed_data["message"].endswith(MEMEX_MESSAGE_MARKER) # ignore message sent by itself
     ):
         return
     
@@ -64,7 +65,7 @@ async def handle_incoming_message(data):
             },
             json={
                 "addresses": [IMESSAGE_EMAIL],
-                "message": completion,
+                "message": completion + MEMEX_MESSAGE_MARKER,
             }
         )
 

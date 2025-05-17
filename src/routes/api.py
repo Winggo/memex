@@ -5,6 +5,7 @@ from fastapi import APIRouter, Request, HTTPException
 from pydantic import BaseModel
 
 from src.rag_engine import respond_with_retrieved_context
+from src.utils.constants import MEMEX_MESSAGE_MARKER
 
 
 BLUEBUBBLES_URL = f"http://localhost:{os.environ['BLUEBUBBLES_PORT']}"
@@ -43,7 +44,7 @@ def send_imessaage(data: CompletionRequest, request: Request):
     }
     payload = {
         "addresses": [IMESSAGE_EMAIL],
-        "message": completion,
+        "message": completion + MEMEX_MESSAGE_MARKER,
     }
 
     try:
