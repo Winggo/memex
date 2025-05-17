@@ -9,10 +9,7 @@ from src.rag_engine import respond_with_retrieved_context
 BLUEBUBBLES_HTTP_URL = f"http://localhost:{os.environ['BLUEBUBBLES_PORT']}"
 BLUEBUBBLES_WS_URL = f"ws://localhost:{os.environ['BLUEBUBBLES_PORT']}"
 BLUEBUBBLES_TOKEN = os.environ["BLUEBUBBLES_TOKEN"]
-IMESSAGE_PHONE_NUMBER = os.environ["IMESSAGE_PHONE_NUMBER"]
-IMESSAGE_EMAILS = os.environ["IMESSAGE_EMAILS"].split(",") if os.environ.get("IMESSAGE_EMAILS") else []
-
-VALID_ADDRESSES = [*IMESSAGE_EMAILS]
+IMESSAGE_EMAIL = os.environ["IMESSAGE_EMAIL"]
 
 
 def test_socketio_handshake():
@@ -47,7 +44,7 @@ async def handle_incoming_message(data):
     
     if (
         parsed_data["service"] != "iMessage" or
-        parsed_data["address"] not in VALID_ADDRESSES or
+        parsed_data["address"] != IMESSAGE_EMAIL or
         not data.get("isFromMe") or
         not isinstance(parsed_data["message"], str) or
         parsed_data["message"] == ""
@@ -66,7 +63,7 @@ async def handle_incoming_message(data):
                 "token": BLUEBUBBLES_TOKEN,
             },
             json={
-                "addresses": [IMESSAGE_PHONE_NUMBER],
+                "addresses": [IMESSAGE_EMAIL],
                 "message": completion,
             }
         )

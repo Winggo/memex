@@ -9,7 +9,7 @@ from src.rag_engine import respond_with_retrieved_context
 
 BLUEBUBBLES_URL = f"http://localhost:{os.environ['BLUEBUBBLES_PORT']}"
 BLUEBUBBLES_TOKEN = os.environ["BLUEBUBBLES_TOKEN"]
-IMESSAGE_PHONE_NUMBER = os.environ["IMESSAGE_PHONE_NUMBER"]
+IMESSAGE_EMAIL = os.environ["IMESSAGE_EMAIL"]
 
 
 router = APIRouter()
@@ -42,7 +42,7 @@ def send_imessaage(data: CompletionRequest, request: Request):
         "token": BLUEBUBBLES_TOKEN,
     }
     payload = {
-        "addresses": [IMESSAGE_PHONE_NUMBER],
+        "addresses": [IMESSAGE_EMAIL],
         "message": completion,
     }
 
@@ -57,7 +57,7 @@ def send_imessaage(data: CompletionRequest, request: Request):
         
         return {
             "status": 200,
-            "phone": IMESSAGE_PHONE_NUMBER,
+            "contact": IMESSAGE_EMAIL,
             "prompt": data.prompt,
         }
 
