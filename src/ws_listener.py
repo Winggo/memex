@@ -1,12 +1,16 @@
+import requests
 import socketio
 import os
-import requests
+from fastapi import HTTPException
+
+from src.rag_engine import respond_with_retrieved_context
 
 
-BLUEBUBBLES_HTTP_URL = f"http://127.0.0.1:{os.environ.get(['BLUEBUBBLES_PORT']}"
-BLUEBUBBLES_WS_URL = f"ws://127.0.0.1:{os.environ['BLUEBUBBLES_PORT']}"
+BLUEBUBBLES_HTTP_URL = f"http://localhost:{os.environ['BLUEBUBBLES_PORT']}"
+BLUEBUBBLES_WS_URL = f"ws://localhost:{os.environ['BLUEBUBBLES_PORT']}"
 BLUEBUBBLES_TOKEN = os.environ["BLUEBUBBLES_TOKEN"]
 IMESSAGE_PHONE_NUMBER = os.environ["IMESSAGE_PHONE_NUMBER"]
+IMESSAGE_EMAIL = os.environ["IMESSAGE_EMAIL"]
 
 
 def test_socketio_handshake():
@@ -30,9 +34,49 @@ async def connect():
 async def disconnect(reason):
     print(f"[Websocket] Disconnected from websocket. Reason: {reason}")
 
-@sio.on("message")
+@sio.on("new-message")
 async def handle_incoming_message(data):
     print(f"[Websocket] Message received: {data}")
+    parsed_data = {
+        "service": data.get("handle", {}).get("service"),
+        "address": data.get("handle", {}).get("address"),
+        "message": data.get("text"),
+    }
+    
+    if (
+        parsed_data["service"] != "iMessage" or
+        parsed_data["address"] != IMESSAGE_EMAIL or
+        not isinstance(parsed_data["message"], str) or
+        parsed_data["message"] == ""
+    ):
+        return
+    
+    completion = respond_with_retrieved_context(parsed_data["message"])
+
+    try:
+        res = requests.post(
+            BLUEBUBBLES_HTTP_URL,
+            headers={
+                "Content-Type": "application/json",
+            },
+            params={
+                "token": BLUEBUBBLES_TOKEN,
+            },
+            json={
+                "addresses": [IMESSAGE_PHONE_NUMBER],
+                "message": completion,
+            }
+        )
+
+        print(f"[Websocket] Response message sent")
+        return {
+            "status": 200,
+            "phone": IMESSAGE_PHONE_NUMBER,
+            "prompt": parsed_data["message"],
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="Sending iMessage failed. Please ensure the messaging server is running.")
+
 
 @sio.on("*")
 async def catch_all(event, data):
