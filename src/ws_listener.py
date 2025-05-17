@@ -10,6 +10,7 @@ from src.utils.constants import MEMEX_MESSAGE_MARKER
 BLUEBUBBLES_HTTP_URL = f"http://localhost:{os.environ['BLUEBUBBLES_PORT']}"
 BLUEBUBBLES_WS_URL = f"ws://localhost:{os.environ['BLUEBUBBLES_PORT']}"
 BLUEBUBBLES_TOKEN = os.environ["BLUEBUBBLES_TOKEN"]
+VALID_IMESSAGE_SENDER_PHONE = os.environ["VALID_IMESSAGE_SENDER_PHONE"]
 VALID_IMESSAGE_SENDERS = os.environ["VALID_IMESSAGE_SENDERS"].split(",")
 IMESSAGE_RECIPIENT = os.environ["IMESSAGE_RECIPIENT"]
 
@@ -47,18 +48,19 @@ async def handle_incoming_message(data):
 
     if (
         parsed_data["service"] != "iMessage" or
-        not data.get("isFromMe") or
+        parsed_data["address"] not in VALID_IMESSAGE_SENDERS or
         not isinstance(parsed_data["message"], str) or
         parsed_data["message"].endswith(MEMEX_MESSAGE_MARKER) # ignore message sent by itself
     ):
         return
     
-    if (
-        parsed_data["address"] not in VALID_IMESSAGE_SENDERS or
-        len(parsed_data["chats"] or []) == 0 or
-        parsed_data["chats"][0].get("chatIdentifier") != IMESSAGE_RECIPIENT
-    ):
-        return
+    chat_id = parsed_data["chats"][0].get("chatIdentifier") if len(parsed_data["chats"]) else None
+    if chat_id != IMESSAGE_RECIPIENT:
+         # edgecase: allow handling this message
+        if not data.get("isFromMe") and chat_id == VALID_IMESSAGE_SENDER_PHONE:
+            pass
+        else:
+            return
     
     completion = respond_with_retrieved_context(parsed_data["message"])
 
