@@ -51,6 +51,10 @@ def send_imessaage(data: CompletionRequest, request: Request):
             f"{BLUEBUBBLES_URL}/api/v1/chat/new",
             headers=headers, params=params, json=payload
         )
+
+        if res.status_code != 200:
+            raise HTTPException(status_code=500, detail="Sending iMessage failed. Please ensure the messaging server is running.")
+        
         return {
             "status": 200,
             "phone": IMESSAGE_PHONE_NUMBER,
