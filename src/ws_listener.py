@@ -11,6 +11,8 @@ BLUEBUBBLES_WS_URL = f"ws://localhost:{os.environ['BLUEBUBBLES_PORT']}"
 BLUEBUBBLES_TOKEN = os.environ["BLUEBUBBLES_TOKEN"]
 IMESSAGE_PHONE_NUMBER = os.environ["IMESSAGE_PHONE_NUMBER"]
 IMESSAGE_EMAIL = os.environ["IMESSAGE_EMAIL"]
+IMESSAGE_ALT_EMAIL = os.environ.get("IMESSAGE_ALT_EMAIL", "none provided")
+VALID_ADDRESSES = [IMESSAGE_PHONE_NUMBER, IMESSAGE_EMAIL, IMESSAGE_ALT_EMAIL]
 
 
 def test_socketio_handshake():
@@ -45,7 +47,8 @@ async def handle_incoming_message(data):
     
     if (
         parsed_data["service"] != "iMessage" or
-        parsed_data["address"] != IMESSAGE_EMAIL or
+        parsed_data["address"] not in VALID_ADDRESSES or
+        not data.get("isFromMe") or
         not isinstance(parsed_data["message"], str) or
         parsed_data["message"] == ""
     ):
