@@ -90,7 +90,7 @@ def get_loader(_file_type, _file_paths, _chunk_max_characters):
 
 def skip_processing_document(_doc):
     content = _doc.page_content.strip()
-    if len(content) < 50:
+    if len(content) < 20:
         return True
     return False
 
