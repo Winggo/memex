@@ -30,4 +30,5 @@ venv/
 __pycache__/
 data/
 chroma_db/
+chroma_db_dev/
 example_data/
