@@ -54,7 +54,7 @@ def get_loader(_file_type, _file_paths, _chunk_max_characters):
                 client=UnstructuredClient(api_key_auth=os.getenv("UNSTRUCTURED_API_KEY")),
                 partition_via_api=True,
                 max_characters=_chunk_max_characters,
-                process_attachments=True,
+                process_attachments=False,
             )
         elif _file_type == "csv":
             loader = UnstructuredLoader(
@@ -77,7 +77,7 @@ def get_loader(_file_type, _file_paths, _chunk_max_characters):
                 _file_paths,
                 post_processors=[clean_extra_whitespace],
                 max_characters=_chunk_max_characters,
-                process_attachments=True,
+                process_attachments=False,
             )
         elif _file_type == "csv":
             loader = UnstructuredLoader(
