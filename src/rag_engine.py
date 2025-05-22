@@ -9,6 +9,7 @@ vectorstore = Chroma(
     persist_directory=CHROMA_PATH,
     embedding_function=embedding_function,
 )
+print(f"[RAG] Vector store loaded from {CHROMA_PATH}")
 
 
 determine_query_type_template = PromptTemplate(
