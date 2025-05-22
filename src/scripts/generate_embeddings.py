@@ -199,7 +199,7 @@ def main():
 
 
     if dry_run:
-        print(f"Dry run: documents embeddings not stored in DB.")
+        print(f"Dry run: documents embeddings not persisted in {CHROMA_PATH}.")
         print(processed_documents[0])
     else:
         # Generate embeddings and store in vector DB
