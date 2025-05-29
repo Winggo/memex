@@ -4,15 +4,15 @@ import os
 from fastapi import HTTPException
 
 from src.rag_engine import respond_with_retrieved_context
-from src.utils.constants import MEMEX_MESSAGE_MARKER
-
-
-BLUEBUBBLES_HTTP_URL = f"http://localhost:{os.environ['BLUEBUBBLES_PORT']}"
-BLUEBUBBLES_WS_URL = f"ws://localhost:{os.environ['BLUEBUBBLES_PORT']}"
-BLUEBUBBLES_TOKEN = os.environ["BLUEBUBBLES_TOKEN"]
-VALID_IMESSAGE_SENDER_PHONE = os.environ["VALID_IMESSAGE_SENDER_PHONE"]
-VALID_IMESSAGE_SENDERS = os.environ["VALID_IMESSAGE_SENDERS"].split(",")
-IMESSAGE_RECIPIENT = os.environ["IMESSAGE_RECIPIENT"]
+from src.utils.constants import (
+    MEMEX_MESSAGE_MARKER,
+    BLUEBUBBLES_HTTP_URL,
+    BLUEBUBBLES_WS_URL,
+    BLUEBUBBLES_TOKEN,
+    VALID_IMESSAGE_SENDER_PHONE,
+    VALID_IMESSAGE_SENDERS,
+    IMESSAGE_RECIPIENT,
+)
 
 
 def test_socketio_handshake():

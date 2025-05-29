@@ -13,6 +13,7 @@ from src.routes.api import router as api_router
 @asynccontextmanager
 async def lifespan(server: FastAPI):
     loop = asyncio.get_event_loop()
+    scheduler = None
 
     if os.environ.get("ENABLE_DISCORD_CLIENT") == "true":
         from src.discord_client import discord_client
@@ -22,10 +23,18 @@ async def lifespan(server: FastAPI):
         from src.ws_listener import start_ws_listener
         loop.create_task(start_ws_listener())
 
+        if os.environ.get("ENABLE_ASSISTANT") == "true":
+            from src.assistant import start_assistant
+            scheduler = await start_assistant()
+            loop.create_task(scheduler)
+
     yield
 
     if os.environ.get("ENABLE_DISCORD_CLIENT") == "true":
         await discord_client.close()
+
+    if scheduler:
+        scheduler.shutdown()
 
 
 server = FastAPI(lifespan=lifespan)

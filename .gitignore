@@ -32,3 +32,5 @@ data/
 chroma_db/
 chroma_db_dev/
 example_data/
+google_oauth_credentials.json
+google_oauth_token.json
