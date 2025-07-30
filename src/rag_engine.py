@@ -47,7 +47,12 @@ Reply using LESS THAN 200 words.
 )
 
 def respond_with_retrieved_context(prompt):
-    rag_documents = vectorstore.similarity_search(prompt, k=8)
+    try:
+        rag_documents = vectorstore.similarity_search(prompt, k=8)
+        print(f"[RAG] Retrieved {len(rag_documents)} documents")
+    except Exception as e:
+        print(f"[RAG] Error retrieving context: {e}")
+        return "I'm sorry, I'm having trouble retrieving the context. Please try again later."
 
     rag_context = ""
     for document in rag_documents:
