@@ -203,13 +203,18 @@ def main():
         print(processed_documents[0])
     else:
         # Generate embeddings and store in vector DB
-        vectorstore = Chroma.from_documents(
-            processed_documents,
-            embedding=embedding_function,
+        vectorstore = Chroma(
             persist_directory=CHROMA_PATH,
+            embedding_function=embedding_function,
         )
+        for doc in processed_documents:
+            try:
+                vectorstore.add_documents([doc])
+            except Exception as e:
+                print(f"Error embedding doc: {e}. Skipping...")
 
         print(f"Embeddings generated and persisted in vector store {CHROMA_PATH}")
+        print(f"Stored documents: {vectorstore._collection.count()}")
 
 
 main()
