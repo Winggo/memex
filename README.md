@@ -31,12 +31,12 @@ Data sources:
 1. Parsing, chunking, preprocessing
     - Langchain + Unstructured.io
 2. Embedding
-    - togethercomputer/m2-bert-80M-2k-retrieval + Together.ai
+    - BAAI/bge-large-en-v1.5 + Together.ai
 3. Vector DB
     - Chroma
 4. Retriever & RAG Model
-    - mistralai/Mistral-7B-Instruct-v0.3
-    - NousResearch/Nous-Hermes-2-Mixtral-8x7B-DPO
+    - meta-llama/Llama-3.3-70B-Instruct-Turbo
+    - Qwen/Qwen2.5-7B-Instruct-Turbo
 5. Optional UI
     - Discord / iMessage (using BlueBubbles) / Gradio
 6. Backend hosting

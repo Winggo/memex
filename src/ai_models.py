@@ -17,8 +17,8 @@ llama_3_70b_free_together_model_creative = ChatTogether(
 
 
 # Used for determining query type. Currently not used for response generation.
-mistral_7b_together_model = ChatTogether(
-    model="mistralai/Mistral-7B-Instruct-v0.3",
+qwen_2_5_7b_together_model = ChatTogether(
+    model="Qwen/Qwen2.5-7B-Instruct-Turbo",
     together_api_key=os.getenv("TOGETHER_API_KEY"),
     temperature=0,
 )

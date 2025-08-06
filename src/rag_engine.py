@@ -1,7 +1,7 @@
 from langchain_chroma import Chroma
 from langchain.prompts import PromptTemplate
 
-from src.ai_models import embedding_function, llama_3_70b_free_together_model_creative, mistral_7b_together_model
+from src.ai_models import embedding_function, llama_3_70b_free_together_model_creative, qwen_2_5_7b_together_model
 from src.utils.constants import CHROMA_PATH
 
 
@@ -22,7 +22,7 @@ Respond using 1 sentence or less, and DO NOT mention "RAG", "querying", or "vect
 )
 
 def determine_query_type(prompt):
-    chain = determine_query_type_template | mistral_7b_together_model
+    chain = determine_query_type_template | qwen_2_5_7b_together_model
     llm_response = chain.invoke({"prompt": prompt})
     return llm_response.content if hasattr(llm_response, 'content') else str(llm_response)
 
