@@ -14,7 +14,15 @@ Data sources:
 - Apple
     - Notes (txt)
     - Contacts (vcf)
+    - Messages (csv)
     - Calendar (ics)
+
+Currently included data:
+- Apple notes
+- Apple contacts
+- Apple messages
+- Google calendar
+- Google maps
 
 
 ## Implementation Steps
