@@ -12,13 +12,13 @@ import datetime
 import requests
 import os
 
-from src.utils.constants import (
+from .utils.constants import (
     BLUEBUBBLES_HTTP_URL,
     BLUEBUBBLES_TOKEN,
     IMESSAGE_RECIPIENT,
     MEMEX_MESSAGE_MARKER,
 )
-from src.ai_models import llama_3_70b_free_together_model_deterministic
+from .ai_models import llama_3_70b_free_together_model_deterministic
 
 
 GOOGLE_OAUTH_SCOPES = ["https://www.googleapis.com/auth/calendar.readonly"]

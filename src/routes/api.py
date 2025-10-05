@@ -4,8 +4,8 @@ import os
 from fastapi import APIRouter, Request, HTTPException
 from pydantic import BaseModel
 
-from src.rag_engine import respond_with_retrieved_context
-from src.utils.constants import MEMEX_MESSAGE_MARKER
+from ..rag_engine import respond_with_retrieved_context
+from ..utils.constants import MEMEX_MESSAGE_MARKER
 
 
 BLUEBUBBLES_URL = f"http://localhost:{os.environ['BLUEBUBBLES_PORT']}"

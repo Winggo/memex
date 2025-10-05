@@ -1,7 +1,7 @@
 import discord
 
-from src.rag_engine import respond_with_retrieved_context
-from src.utils.constants import DISCORD_APP_ID
+from .rag_engine import respond_with_retrieved_context
+from .utils.constants import DISCORD_APP_ID
 
 
 class DiscordClient(discord.Client):

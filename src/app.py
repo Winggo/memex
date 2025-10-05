@@ -7,7 +7,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 load_dotenv(".env")
-from src.routes.api import router as api_router
+from .routes.api import router as api_router
 
 
 @asynccontextmanager
@@ -16,15 +16,15 @@ async def lifespan(server: FastAPI):
     scheduler = None
 
     if os.environ.get("ENABLE_DISCORD_CLIENT") == "true":
-        from src.discord_client import discord_client
+        from .discord_client import discord_client
         loop.create_task(discord_client.start(os.environ["DISCORD_BOT_TOKEN"]))
 
     if os.environ.get("ENABLE_WEBSOCKET_LISTENER") == "true":
-        from src.ws_listener import start_ws_listener
+        from .ws_listener import start_ws_listener
         loop.create_task(start_ws_listener())
 
         if os.environ.get("ENABLE_ASSISTANT") == "true":
-            from src.assistant import start_assistant
+            from .assistant import start_assistant
             scheduler = await start_assistant()
             loop.create_task(scheduler)
 
@@ -51,4 +51,4 @@ server.include_router(api_router)
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("app:server", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("src.app:server", host="0.0.0.0", port=8000, reload=True)
