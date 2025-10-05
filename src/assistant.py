@@ -2,26 +2,79 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
 from langchain.prompts import PromptTemplate
 from langchain_core.tools import tool
-from fastapi import HTTPException
 from google.oauth2.credentials import Credentials
 from google.auth.transport.requests import Request
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.errors import HttpError
+from fastapi import HTTPException
 import datetime
-import requests
 import os
+import requests
 
 from .utils.constants import (
     BLUEBUBBLES_HTTP_URL,
     BLUEBUBBLES_TOKEN,
     IMESSAGE_RECIPIENT,
     MEMEX_MESSAGE_MARKER,
+    DISCORD_CHANNEL_ID,
 )
 from .ai_models import llama_3_70b_free_together_model_deterministic
 
 
 GOOGLE_OAUTH_SCOPES = ["https://www.googleapis.com/auth/calendar.readonly"]
+
+
+async def send_discord_message(message: str):
+    """
+    Send a message to the configured Discord channel
+    """
+    if DISCORD_CHANNEL_ID == 0:
+        print("[Discord] No Discord channel ID configured, skipping message send")
+        return
+    
+    try:
+        # Get the Discord client from the app
+        from .discord_client import discord_client
+        
+        if not discord_client.is_ready():
+            print("[Discord] Discord client not ready, skipping message send")
+            return
+            
+        channel = discord_client.get_channel(DISCORD_CHANNEL_ID)
+        if channel is None:
+            print(f"[Discord] Channel with ID {DISCORD_CHANNEL_ID} not found")
+            return
+            
+        await channel.send(message)
+        print(f"[Discord] Message sent to channel {DISCORD_CHANNEL_ID}")
+        
+    except Exception as e:
+        print(f"[Discord] Failed to send message: {e}")
+
+
+def send_imessage(message: str):
+    try:
+        res = requests.post(
+            f"{BLUEBUBBLES_HTTP_URL}/api/v1/chat/new",
+            headers={
+                "Content-Type": "application/json",
+            },
+            params={
+                "token": BLUEBUBBLES_TOKEN,
+            },
+            json={
+                "addresses": [IMESSAGE_RECIPIENT],
+                "message": message + MEMEX_MESSAGE_MARKER,
+            }
+        )
+
+        if res.status_code != 200:
+            raise HTTPException(status_code=500, detail="Sending iMessage failed. Please ensure the messaging server is running.")
+
+        print(f"[Websocket] Completion message sent: {res.status_code}")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="Sending iMessage failed. Please ensure the messaging server is running.")
 
 
 @tool
@@ -87,33 +140,20 @@ Stocks:
 ```"""
 )
 
-def generate_daily_summary():
+async def generate_daily_summary():
     chain = daily_summary_template | llama_3_70b_free_together_model_deterministic
     llm_response = chain.invoke({})
 
     completion = llm_response.content if hasattr(llm_response, 'content') else str(llm_response)
+    print(f"[Assistant] Daily summary generated: {completion}")
 
-    try:
-        res = requests.post(
-            f"{BLUEBUBBLES_HTTP_URL}/api/v1/chat/new",
-            headers={
-                "Content-Type": "application/json",
-            },
-            params={
-                "token": BLUEBUBBLES_TOKEN,
-            },
-            json={
-                "addresses": [IMESSAGE_RECIPIENT],
-                "message": completion + MEMEX_MESSAGE_MARKER,
-            }
-        )
+    # Send to summary to Discord
+    if os.environ.get("ENABLE_DISCORD_CLIENT") == "true":
+        await send_discord_message(completion)
 
-        if res.status_code != 200:
-            raise HTTPException(status_code=500, detail="Sending iMessage failed. Please ensure the messaging server is running.")
-
-        print(f"[Websocket] Completion message sent: {res.status_code}")
-    except Exception as e:
-        raise HTTPException(status_code=500, detail="Sending iMessage failed. Please ensure the messaging server is running.")
+    # Send to summary to iMessage
+    if os.environ.get("ENABLE_WEBSOCKET_LISTENER") == "true":
+        send_imessage(completion)
 
 
 def start_assistant():

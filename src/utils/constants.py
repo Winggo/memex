@@ -2,6 +2,7 @@ import os
 
 CHROMA_PATH = os.path.join(os.getcwd(), os.environ.get("CHROMA_DIRNAME", "chroma_db"))
 DISCORD_APP_ID = 1369249100507123722
+DISCORD_CHANNEL_ID = int(os.environ.get("DISCORD_CHANNEL_ID", "0"))
 MEMEX_MESSAGE_MARKER = "\u200B\u200C\u200D"
 
 BLUEBUBBLES_HTTP_URL = f"http://localhost:{os.environ['BLUEBUBBLES_PORT']}"
