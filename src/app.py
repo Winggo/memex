@@ -16,7 +16,7 @@ async def lifespan(server: FastAPI):
     scheduler = None
 
     if os.environ.get("ENABLE_DISCORD_CLIENT") == "true":
-        from .discord_client import discord_client
+        from .integrations.discord_client import discord_client
         loop.create_task(discord_client.start(os.environ["DISCORD_BOT_TOKEN"]))
 
     if os.environ.get("ENABLE_WEBSOCKET_LISTENER") == "true":

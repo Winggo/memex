@@ -21,7 +21,7 @@ async def send_discord_message(message: str, retries: int = 3):
     
     try:
         # Get the Discord client from the app
-        from ..discord_client import discord_client
+        from ..integrations.discord_client import discord_client
         
         if not discord_client.is_ready():
             print("[Discord] Discord client not ready, skipping message send")
