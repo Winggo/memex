@@ -4,7 +4,7 @@ import os
 from fastapi import APIRouter, Request, HTTPException
 from pydantic import BaseModel
 
-from ..rag_engine import respond_with_retrieved_context
+from ..ai.rag_engine import respond_with_retrieved_context
 from ..utils.constants import MEMEX_MESSAGE_MARKER
 
 
