@@ -8,15 +8,16 @@ from .constants import (
     IMESSAGE_RECIPIENT,
     MEMEX_MESSAGE_MARKER,
     DISCORD_CHANNEL_ID,
+    DISCORD_USER_ID,
 )
 
 
 async def send_discord_message(message: str, retries: int = 3):
     """
-    Send a message to the configured Discord channel
+    Send a message to the configured Discord channel or user DM
     """
-    if DISCORD_CHANNEL_ID == 0:
-        print("[Discord] No Discord channel ID configured, skipping message send")
+    if DISCORD_USER_ID == 0 and DISCORD_CHANNEL_ID == 0:
+        print("[Discord] No Discord channel ID and user ID configured, skipping message send")
         return
     
     try:
@@ -30,13 +31,17 @@ async def send_discord_message(message: str, retries: int = 3):
                 await send_discord_message(message, retries-1)
             return
             
-        channel = discord_client.get_channel(DISCORD_CHANNEL_ID)
-        if channel is None:
-            print(f"[Discord] Channel with ID {DISCORD_CHANNEL_ID} not found")
-            return
-            
-        await channel.send(message)
-        print(f"[Discord] Message sent to channel {DISCORD_CHANNEL_ID}")
+        if DISCORD_USER_ID:
+            dm_channel = await discord_client.fetch_user(DISCORD_USER_ID)
+            if dm_channel:
+                await dm_channel.send(message)
+                print(f"[Discord] Message sent to user {DISCORD_USER_ID}")
+
+        if DISCORD_CHANNEL_ID:
+            channel = discord_client.get_channel(DISCORD_CHANNEL_ID)
+            if channel:
+                await channel.send(message)
+                print(f"[Discord] Message sent to channel {DISCORD_CHANNEL_ID}")
         
     except Exception as e:
         print(f"[Discord] Failed to send message: {e}")
