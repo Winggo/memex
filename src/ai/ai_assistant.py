@@ -29,7 +29,7 @@ newsletters_email_addresses = [
 email_newslatters_summary_template = PromptTemplate(
     input_variables=["emails"],
     template="""For each of the given email newsletters, extract the most important points to produce a summary.
-For each summary, title it with the newsletter name. Each summary should be less than 200 words. Use bullet points whenever appropriate, bold key words, and emojis to encapsulate bulletpoint topic.
+For each summary, title it with the newsletter name and subtitle it with the newsletter email title. Each summary should be less than 200 words. Use bullet points whenever appropriate, bold key words, and emojis to encapsulate bulletpoint topic.
 Do not preface the response. Use "📰 Newsletters for" along with one newsletter's date as the response title, and make it bold.
 Don't include promotional info.
 
