@@ -179,7 +179,6 @@ class GmailService:
 # Global instance
 gmail_service = None
 
-
 def get_gmail_service() -> GmailService:
     """Get or create Gmail service instance"""
     global gmail_service
