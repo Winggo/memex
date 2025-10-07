@@ -11,3 +11,10 @@ BLUEBUBBLES_TOKEN = os.environ["BLUEBUBBLES_TOKEN"]
 VALID_IMESSAGE_SENDER_PHONE = os.environ["VALID_IMESSAGE_SENDER_PHONE"]
 VALID_IMESSAGE_SENDERS = os.environ["VALID_IMESSAGE_SENDERS"].split(",")
 IMESSAGE_RECIPIENT = os.environ["IMESSAGE_RECIPIENT"]
+
+GOOGLE_OAUTH_SCOPES = [
+    "https://www.googleapis.com/auth/gmail.readonly",
+    "https://www.googleapis.com/auth/gmail.modify",
+    "https://www.googleapis.com/auth/calendar.readonly",
+    "https://www.googleapis.com/auth/calendar.events.owned"
+]

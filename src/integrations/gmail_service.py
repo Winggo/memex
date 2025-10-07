@@ -8,13 +8,7 @@ from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 from google_auth_oauthlib.flow import InstalledAppFlow
 from bs4 import BeautifulSoup
-
-
-# Gmail API scopes
-GOOGLE_OAUTH_SCOPES = [
-    "https://www.googleapis.com/auth/gmail.readonly",
-    "https://www.googleapis.com/auth/gmail.modify"
-]
+from ..utils.constants import GOOGLE_OAUTH_SCOPES
 
 
 class GmailService:
