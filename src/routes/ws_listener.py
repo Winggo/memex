@@ -2,8 +2,8 @@ import requests
 import socketio
 from fastapi import HTTPException
 
-from .rag_engine import respond_with_retrieved_context
-from .utils.constants import (
+from ..rag_engine import respond_with_retrieved_context
+from ..utils.constants import (
     MEMEX_MESSAGE_MARKER,
     BLUEBUBBLES_HTTP_URL,
     BLUEBUBBLES_WS_URL,

@@ -20,7 +20,7 @@ async def lifespan(server: FastAPI):
         loop.create_task(discord_client.start(os.environ["DISCORD_BOT_TOKEN"]))
 
     if os.environ.get("ENABLE_WEBSOCKET_LISTENER") == "true":
-        from .ws_listener import start_ws_listener
+        from .routes.ws_listener import start_ws_listener
         loop.create_task(start_ws_listener())
 
     if os.environ.get("ENABLE_ASSISTANT") == "true":
