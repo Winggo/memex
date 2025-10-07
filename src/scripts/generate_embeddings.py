@@ -30,7 +30,7 @@ from langchain_chroma import Chroma
 from ..utils.helpers import get_file_metadata, get_date_from_str, remove_image_references
 
 load_dotenv(".env")
-from ..ai_models import embedding_function
+from ..ai.ai_models import embedding_function
 
 from ..utils.constants import CHROMA_PATH
 

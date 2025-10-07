@@ -1,7 +1,7 @@
 from langchain_chroma import Chroma
 from langchain.prompts import PromptTemplate
 
-from .ai_models import embedding_function, llama_3_70b_free_together_model_creative, qwen_2_5_7b_together_model
+from .ai.ai_models import embedding_function, llama_3_70b_free_together_model_creative, qwen_2_5_7b_together_model
 from .utils.constants import CHROMA_PATH
 
 

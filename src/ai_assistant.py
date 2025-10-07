@@ -4,7 +4,7 @@ from langchain_core.tools import tool
 from langchain.prompts import PromptTemplate
 import os
 
-from .ai_models import llama_3_70b_free_together_model_deterministic
+from .ai.ai_models import llama_3_70b_free_together_model_deterministic
 from .integrations.gmail_service import get_gmail_service
 from .utils.messaging import send_discord_message, send_imessage
 
