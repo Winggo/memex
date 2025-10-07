@@ -6,53 +6,18 @@ import os
 
 from .ai_models import llama_3_70b_free_together_model_deterministic
 from ..integrations.gmail_service import get_gmail_service
+from ..integrations.gcalendar_service import get_gcal_service
 from ..utils.messaging import send_discord_message, send_imessage
 
 
 @tool
-def get_calendar_events():
+def get_today_calendar_events():
     """
     Get today's events from Google Calendar
     """
-    creds = None
-    if os.path.exists("google_oauth_credentials.json"):
-        creds = Credentials.from_authorized_user_file("google_oauth_credentials.json", GOOGLE_OAUTH_SCOPES)
-    if not creds or not creds.valid:
-        if creds and creds.expired and creds.refresh_token:
-            creds.refresh(Request())
-        else:
-            flow = InstalledAppFlow.from_client_secrets_file("google_oauth_credentials.json", GOOGLE_OAUTH_SCOPES)
-            creds = flow.run_local_server(port=0)
-
-        with open("google_oauth_credentials.json", "w") as token:
-            token.write(creds.to_json())
-        if not newsletters:
-            print("[Assistant] No newsletters found")
-            return
-
-    try:
-        service = build("calendar", "v3", credentials=creds)
-        now = datetime.datetime.now(tz=datetime.timezone.utc).isoformat()
-
-        events_result = (
-            service.events()
-            .list(
-                calendarId="primary",
-                timeMin=now,
-                maxResults=10,
-                singleEvents=True,
-                orderBy="startTime",
-            )
-            .execute()
-        )
-        events = events_result.get("items", [])
-
-        for event in events:
-            start = event["start"].get("dateTime", event["start"].get("date"))
-            print(start, event["summary"])
-
-    except HttpError as error:
-        print(f"A Google calendar http error occurred: {error}")
+    gcal = get_gcal_service()
+    events = gcal.get_events_for_date()
+    return events
 
 
 newsletters_email_addresses = [
