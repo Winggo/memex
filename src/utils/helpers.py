@@ -1,5 +1,6 @@
 import re
 import os
+import unicodedata
 from datetime import datetime
 
 
@@ -55,3 +56,21 @@ def remove_image_references(text):
 
 def normalize_phone_number(phone_number):
     return phone_number.replace(" ", "").replace("-", "").replace("(", "").replace(")", "")
+
+
+def clean_text(text: str)->str:
+    """Clean unnecessary characters in text like emails"""
+    # Normalize Unicode characters
+    text = unicodedata.normalize("NFKC", text)
+    
+    # Remove common invisible/zero-width characters
+    text = re.sub(r'[\u0000-\u001F\u200b-\u200f\u202a-\u202e\u2060\uFEFF]', '', text)
+    
+    # Replace non-breaking spaces (\xa0) with regular spaces
+    text = text.replace('\xa0', ' ')
+    
+    # Collapse multiple spaces or newlines into a single space
+    text = re.sub(r'\s+', ' ', text)
+    
+    # Strip leading/trailing whitespace
+    return text.strip()

@@ -9,6 +9,7 @@ from googleapiclient.errors import HttpError
 from google_auth_oauthlib.flow import InstalledAppFlow
 from bs4 import BeautifulSoup
 from ..utils.constants import GOOGLE_OAUTH_SCOPES
+from ..utils.helpers import clean_text
 
 
 class GmailService:
@@ -151,7 +152,7 @@ class GmailService:
             elif payload["mimeType"] == "text/plain" and "data" in payload["body"]:
                 body = base64.urlsafe_b64decode(payload["body"]["data"]).decode("utf-8")
         
-        return body
+        return clean_text(body)
     
 
     def get_daily_emails_from_newsletter(self, sender_email: str, max_results: int = 1) -> List[Dict]:

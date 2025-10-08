@@ -13,14 +13,14 @@ llama_3_70b_free_together_model_creative = ChatTogether(
     model="meta-llama/Llama-3.3-70B-Instruct-Turbo-Free",
     together_api_key=os.getenv("TOGETHER_API_KEY"),
     temperature=0.4,
-    max_tokens=768,
+    max_tokens=1024,
 )
 
 llama_3_70b_free_together_model_deterministic = ChatTogether(
     model="meta-llama/Llama-3.3-70B-Instruct-Turbo-Free",
     together_api_key=os.getenv("TOGETHER_API_KEY"),
     temperature=0,
-    max_tokens=768,
+    max_tokens=1024,
 )
 
 
@@ -29,5 +29,5 @@ qwen_2_5_7b_together_model = ChatTogether(
     model="Qwen/Qwen2.5-7B-Instruct-Turbo",
     together_api_key=os.getenv("TOGETHER_API_KEY"),
     temperature=0,
-    max_tokens=768,
+    max_tokens=1024,
 )
