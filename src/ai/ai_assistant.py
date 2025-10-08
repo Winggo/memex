@@ -34,33 +34,6 @@ def fetch_and_read_newsletters()->dict:
     try:
         gmail = get_gmail_service()
 
-#         emails_by_newsletters = {}
-#         for email_address in newsletters_email_addresses:
-#             newsletter_emails = gmail.get_daily_emails_from_newsletter(email_address)
-
-#             formatted_newsletter_emails = []
-#             for email in newsletter_emails:
-#                 # formatted_newsletter_emails.append({
-#                 #     "from": email["from"],
-#                 #     "subject": email["subject"],
-#                 #     "date": email["date"],
-#                 #     "content": email["body"],
-#                 # })
-#                 formatted_newsletter_emails.append(f"""From: {email["from"]}
-# Subject: {email["subject"]}
-# Date: {email["date"]}
-# Content: {email["body"]}""")
-#                 gmail.mark_as_read(email["id"])
-#                 print(f"[Assistant] Email {email['id']} marked as read")
-
-#             emails_by_newsletters[email_address] = formatted_newsletter_emails
-
-#         if not emails_by_newsletters:
-#             print("[Assistant] No newsletters found")
-#             return {}
-        
-#         return emails_by_newsletters
-
         newsletters = []
         for email_address in newsletters_email_addresses:
             emails_from_newsletter = gmail.get_daily_emails_from_newsletter(email_address)
@@ -82,10 +55,7 @@ def fetch_and_read_newsletters()->dict:
             gmail.mark_as_read(email["id"])
             print(f"[Assistant] Email {email['id']} marked as read")
         
-        # return newsletters_text
-        
-        newsletters_content = "\n\n".join(newsletters_text)
-        return newsletters_content
+        return newsletters_text
 
     except Exception as e:
         print(f"[Assistant] Error fetching newsletters: {e}")
@@ -109,6 +79,7 @@ async def agentic_send_daily_newsletter_summaries():
         llama_3_70b_free_together_model_deterministic,
         agent="zero-shot-react-description",
         verbose=True,
+        handle_parsing_errors=True,
     )
 
     completion = "Agent is unable to read and summarize today's newsletters."
@@ -130,43 +101,11 @@ Don't include promotional info."""
     await send_message(completion)
 
 
-
-# email_newslatters_summary_template = PromptTemplate(
-#     input_variables=["emails"],
-#     template="""For each of the given email newsletters, extract the most important points to produce a summary.
-# For each summary, title it with the newsletter name and subtitle it with the newsletter email title. Each summary should be less than 200 words. Use bullet points whenever appropriate, bold key words, and emojis to encapsulate bulletpoint topic.
-# Do not preface the response. Use "📰 Newsletters for" along with one newsletter's date as the response title, and make it bold.
-# Don't include promotional info.
-
-# *Emails:*
-# {emails}"""
-# )
-
-
-# async def send_daily_newsletter_summaries():
-#     """Generate daily newsletter summaries from Gmail"""
-
-#     emails_by_newsletters = fetch_and_read_newsletters()
-#     if not emails_by_newsletters:
-#         await send_message("Cannot generate today's newsletters summaries")
-#         return
-
-#     chain = email_newslatters_summary_template | llama_3_70b_free_together_model_deterministic
-#     llm_response = chain.invoke({"emails": emails_by_newsletters})
-
-#     completion = llm_response.content if hasattr(llm_response, 'content') else str(llm_response)
-#     print(f"[Assistant] Daily newsletters summaries generated: {completion}")
-
-#     # Send summary to Discord & iMessage
-#     await send_message(completion)
-
-
 def start_assistant():
     """
     Start assistant to retrieve email newsletters and generate summaries for them daily at 8am PT
     """
     scheduler = AsyncIOScheduler()
-    # scheduler.add_job(send_daily_newsletter_summaries, CronTrigger(hour=9, minute=30), id="daily_assistant_completion")
     scheduler.add_job(agentic_send_daily_newsletter_summaries, CronTrigger(hour=9, minute=30), id="agentic_daily_assistant_completion")
     scheduler.start()
     return scheduler
