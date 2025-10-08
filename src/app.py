@@ -24,8 +24,9 @@ async def lifespan(server: FastAPI):
         loop.create_task(start_ws_listener())
 
     if os.environ.get("ENABLE_ASSISTANT") == "true":
-        from .ai.ai_assistant import start_assistant
-        scheduler = start_assistant()
+        from .ai.ai_assistant import start_assistant, agentic_send_daily_newsletter_summaries
+        await agentic_send_daily_newsletter_summaries()
+        # scheduler = start_assistant()
 
     yield
 

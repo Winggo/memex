@@ -1,3 +1,4 @@
+import os
 import asyncio
 import requests
 from fastapi import HTTPException
@@ -69,3 +70,14 @@ def send_imessage(message: str):
         print(f"[Websocket] Completion message sent: {res.status_code}")
     except Exception as e:
         raise HTTPException(status_code=500, detail="Sending iMessage failed. Please ensure the messaging server is running.")
+
+
+async def send_message(message: str):
+    """
+    Send message to Discord & iMessage
+    """
+    if os.environ.get("ENABLE_DISCORD_CLIENT") == "true":
+        await send_discord_message(message)
+
+    if os.environ.get("ENABLE_WEBSOCKET_LISTENER") == "true":
+        send_imessage(message)
