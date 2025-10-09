@@ -2,7 +2,6 @@ import asyncio
 from datetime import datetime
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
-from langchain.prompts import PromptTemplate
 
 from langchain_core.tools import tool
 from langchain.agents import initialize_agent, Tool
@@ -84,6 +83,26 @@ def fetch_and_read_newsletter(newsletter_email_address: str)->list:
         return []
 
 
+def generate_newsletter_analyst_prompt(newsletter_address):
+        prompt = f"""You are a newsletter analyst. Your task: analyze newsletters from {newsletter_address}.
+
+Available tools:
+- fetch_and_read_newsletter: Get today's newsletter content for a specified newsletter email address
+
+Process:
+1. Use the fetch_and_read_newsletter tool to get today's newsletter
+2. Analze the content and provide insights
+3. Format the response as follows:
+    - Newsletter name as title
+    - Email subject as subtitle
+    - Key points as bullets points (<= 200 words)
+    - Bold title, subtitle, important words, add emojis
+    - No promotional content
+    
+Think through each step, then execute your plan."""
+        return prompt
+
+
 async def agentic_send_daily_newsletter_summaries():
     """
     Runs an agent which reads and summarizes today's newsletters
@@ -95,28 +114,22 @@ async def agentic_send_daily_newsletter_summaries():
         "superhuman@mail.joinsuperhuman.ai",
     ]
 
-    def generate_prompt(newsletter_address):
-        prompt = f"""Summarize newsletter from {newsletter_address} for today.
-For the summary, title it with the newsletter name, subtitle it with the newsletter email title, and extract the most important points to form bullet points.
-Bold both the title and subtitle. It should use less than 200 words, bold key words, and use emojis to indicate the topic.
-Do not preface your response. Don't include promotional info."""
-        return prompt
-
     completion = "Agent is unable to read and summarize today's newsletters."
     responses = []
-    try:
-        for email_address in newsletters_email_addresses:
-            try:
-                prompt = generate_prompt(email_address)
-                llm_response = await asyncio.wait_for(agent.arun(prompt), timeout=60)
-                completion = llm_response if isinstance(llm_response, str) else str(llm_response)
-                responses.append(completion)
-                print(f"[Assistant] Daily newsletter summary generated for {email_address}: {completion}")
-            except Exception as e:
-                print(f"[Assistant] Error generating newsletter summary for {email_address}: {e}")
-
-    except Exception as e:
-        print(f"[Assistant] Error generating newsletter summaries: {e}")
+    for email_address in newsletters_email_addresses:
+        try:
+            prompt = generate_newsletter_analyst_prompt(email_address)
+            llm_response = await asyncio.wait_for(
+                agent.arun(prompt),
+                timeout=60
+            )
+            completion = llm_response if isinstance(llm_response, str) else str(llm_response)
+            responses.append(completion)
+            print(f"[Assistant] Daily newsletter summary generated for {email_address}: {completion}")
+        except asyncio.TimeoutError as e:
+            print(f"[Assistant] Timed out generating newsletter summary for {email_address}: {e}")
+        except Exception as e:
+            print(f"[Assistant] Error generating newsletter summary for {email_address}: {e}")
 
     # Send summary to Discord & iMessage
     if responses:
