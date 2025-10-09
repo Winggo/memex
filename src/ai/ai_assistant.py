@@ -10,6 +10,7 @@ from .ai_models import llama_3_70b_free_together_model_deterministic
 from ..integrations.gmail_service import get_gmail_service
 from ..integrations.gcalendar_service import get_gcal_service
 from ..utils.messaging import send_message
+from ..utils.constants import NEWSLETTER_EMAIL_ADDRESSES
 
 
 ai_agent = None
@@ -107,16 +108,15 @@ async def agentic_send_daily_newsletter_summaries():
     """
     Runs an agent which reads and summarizes today's newsletters
     """
-    agent = get_ai_agent()
+    if not NEWSLETTER_EMAIL_ADDRESSES:
+        print(f"No newsletter email addresses provided in env")
+        return
 
-    newsletters_email_addresses = [
-        "crew@morningbrew.com",
-        "superhuman@mail.joinsuperhuman.ai",
-    ]
+    agent = get_ai_agent()
 
     completion = "Agent is unable to read and summarize today's newsletters."
     responses = []
-    for email_address in newsletters_email_addresses:
+    for email_address in NEWSLETTER_EMAIL_ADDRESSES:
         try:
             prompt = generate_newsletter_analyst_prompt(email_address)
             llm_response = await asyncio.wait_for(
@@ -140,11 +140,18 @@ async def agentic_send_daily_newsletter_summaries():
         await send_message("Unable to retrieve & summarize today's newsletters")
 
 
+async def run_daily_agentic_tasks():
+    """
+    Tasks for agent to run daily
+    """
+    await agentic_send_daily_newsletter_summaries()
+
+
 def start_assistant():
     """
-    Start assistant to retrieve email newsletters and generate summaries for them daily at 8am PT
+    Start AI agent scheduler
     """
     scheduler = AsyncIOScheduler()
-    scheduler.add_job(agentic_send_daily_newsletter_summaries, CronTrigger(hour=9, minute=30), id="agentic_daily_assistant_completion")
+    scheduler.add_job(run_daily_agentic_tasks, CronTrigger(hour=9, minute=30), id="agentic_daily_assistant_completion")
     scheduler.start()
     return scheduler
