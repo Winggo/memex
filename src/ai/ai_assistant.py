@@ -26,6 +26,11 @@ def get_ai_agent():
                 description="""Fetches newsletter emails from a specified email address, formats the content as text, and marks the emails as read.
 Args:
     newsletter_email_address: The email address of the newsletter."""
+            ),
+            Tool(
+                name="get_today_calendar_events",
+                func=get_today_calendar_events,
+                description="Get today's events on Google Calendar."
             )
         ]
         ai_agent = initialize_agent(
@@ -41,7 +46,7 @@ Args:
 @tool
 def get_today_calendar_events():
     """
-    Get today's events from Google Calendar
+    Get today's events on Google Calendar
     """
     gcal = get_gcal_service()
     events = gcal.get_events_for_date()
@@ -121,7 +126,7 @@ async def agentic_send_daily_newsletter_summaries():
             prompt = generate_newsletter_analyst_prompt(email_address)
             llm_response = await asyncio.wait_for(
                 agent.arun(prompt),
-                timeout=60
+                timeout=120
             )
             completion = llm_response if isinstance(llm_response, str) else str(llm_response)
             responses.append(completion)
@@ -137,14 +142,58 @@ async def agentic_send_daily_newsletter_summaries():
         combined_response = f"## 📰 Newsletters for {today}\n\n" + "\n\n".join(responses)
         await send_message(combined_response)
     else:
-        await send_message("Unable to retrieve & summarize today's newsletters")
+        await send_message(completion)
 
 
-async def run_daily_agentic_tasks():
+async def agentic_send_daily_calendar_events():
+    """
+    Runs an agent which summarizes today's events on Google Calendar
+    """
+    agent = get_ai_agent()
+
+    completion = "Agent is unable to read and summarize today's calendar events."
+    prompt = """You are personal scheduling assistant. Your task: list today's events on the calendar.
+Available tools:
+- get_today_calendar_events: Get today's events on Google Calendar
+
+Process:
+1. Use the get_today_calendar_events tool to get today's events from Google calendar
+2. Parse important event details from the tool output
+3. Format the response as follows:
+    - List today's events in chronological order in a bullet point list
+    - Each bullet point should start with the start/end time of the event (formatted [hh:mm] - [hh:mm] [am/pm]) bolded
+        - Ensure the date & time is correct. If you are not sure, indicate so.
+    - List event name bolded and as a sub bullet point.
+    - List other event details like location & description as sub bullet points. Make sure to use the bullet point character.
+    - No need to explicitly prefix it with "event name", "event description", or similar.
+    - Summarize the description into 2 sentences max.
+    - No need to mention no description available.
+    
+Don't provide a warning about today's date. You can trust that the tool correctly returns events for today. 
+Think through each step, then execute your plan."""
+
+    try:
+        llm_response = await asyncio.wait_for(
+            agent.arun(prompt),
+            timeout=120
+        )
+        completion = llm_response if isinstance(llm_response, str) else str(llm_response)
+    except asyncio.TimeoutError as e:
+            print(f"[Assistant] Timed out generating calendar events summary: {e}")
+    except Exception as e:
+        print(f"[Assistant] Error generating calendar events summary: {e}")
+
+    today = datetime.now().strftime('%m/%d/%Y')
+    response = f"## 🗓️ Events for {today}\n\n" + completion
+    await send_message(response)
+
+
+async def run_daily_tasks():
     """
     Tasks for agent to run daily
     """
     await agentic_send_daily_newsletter_summaries()
+    await agentic_send_daily_calendar_events()
 
 
 def start_assistant():
@@ -152,6 +201,6 @@ def start_assistant():
     Start AI agent scheduler
     """
     scheduler = AsyncIOScheduler()
-    scheduler.add_job(run_daily_agentic_tasks, CronTrigger(hour=9, minute=30), id="agentic_daily_assistant_completion")
+    scheduler.add_job(run_daily_tasks, CronTrigger(hour=9, minute=30), id="agentic_daily_assistant")
     scheduler.start()
     return scheduler

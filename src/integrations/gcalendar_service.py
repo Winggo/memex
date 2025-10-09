@@ -60,9 +60,12 @@ class GcalendarService:
             singleEvents=True,
             orderBy="startTime",
             timeMin=start.isoformat(),
-            timeMax=end.isoformat()
+            timeMax=end.isoformat(),
+            fields="items(id,summary,location,description,start,end,attendees,status,creator,organizer),nextPageToken"
         ).execute()
         events = events_result.get("items", [])
+        for event in events:
+            event["description"] = event.get("description", "")[:150] # roughly 25 words
 
         return events
 
