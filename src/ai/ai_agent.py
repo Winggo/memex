@@ -31,6 +31,11 @@ Args:
                 name="get_calendar_events",
                 func=get_calendar_events,
                 description="Get events on Google Calendar."
+            ),
+            Tool(
+                name="create_calendar_event",
+                func=create_calendar_event,
+                description="Create event on Google Calendar."
             )
         ]
         ai_agent = initialize_agent(
@@ -51,6 +56,25 @@ def get_calendar_events():
     gcal = get_gcal_service()
     events = gcal.get_events_for_date()
     return events
+
+
+@tool
+def create_calendar_event(calendar_id: str, fields: dict):
+    """
+    Create event on Google Calendar
+    Args:
+        calendar_id: <string, required> The ID of the calendar to create event for.
+        fields: <dict, required> Fields of the event to create. The dict keys are listed below.
+            summary: <string, required> The title of the event.
+            start_datetime: <string, required> The start date and/or time of the event. Formatted as "YYYY-MM-DDTHH:MM:SS".
+            end_datetime: <string, required> The end date and/or time of the event. Formatted as "YYYY-MM-DDTHH:MM:SS".
+            description: <string, optional> The description of the event.
+            location: <string, optional> The location of the event.
+            timezone: <string, optional> The timezone of the event.
+    """
+    gcal = get_gcal_service()
+    created_event = gcal.create_event(calendar_id, fields)
+    return created_event
 
 
 @tool
@@ -196,9 +220,9 @@ async def run_daily_tasks():
     await agentic_send_daily_calendar_events()
 
 
-def start_assistant():
+def start_agent_jobs():
     """
-    Start AI agent scheduler
+    Start AI agent scheduled jobs
     """
     scheduler = AsyncIOScheduler()
     scheduler.add_job(run_daily_tasks, CronTrigger(hour=9, minute=30), id="agentic_daily_assistant")

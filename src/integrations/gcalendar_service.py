@@ -70,6 +70,48 @@ class GcalendarService:
         return events
 
 
+    def create_event(self, calendar_id, fields):
+        """
+        Create an event with specified details
+
+        Args:
+            calendar_id: (str - required) Calendar to insert into
+            fields: dict with optional keys:
+                - summary (str - required)
+                - start_datetime (string - required)
+                - end_datetime (string - required)
+                - description (str)
+                - location (str)
+                - timezone (str, e.g. "America/Los_Angeles")
+        """
+        fields = fields or {}
+        if not calendar_id or "summary" not in fields or "start_datetime" not in fields or "end_datetime" not in fields:
+            print(f"[GCal] Required fields not found. Event not created.")
+            return
+
+        event = {
+            "summary": fields["summary"],
+            "start": {
+                "dateTime": fields["start_datetime"].isoformat(),
+                "timeZone": fields.get("timezone", "America/Los_Angeles"),
+            },
+            "end": {
+                "dateTime": fields["end_datetime"].isoformat(),
+                "timeZone": fields.get("timezone", "America/Los_Angeles"),
+            },
+            "description": fields.get("description", "Created by Memex"),
+            "location": fields.get("location"),
+        }
+
+        created_event = self.service.events().insert(
+            calendarId=calendar_id,
+            body=event,
+        ).execute()
+        
+        return created_event
+
+
+
 # Global instance
 gcal_service = None
 

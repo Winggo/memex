@@ -23,9 +23,9 @@ async def lifespan(server: FastAPI):
         from .routes.ws_listener import start_ws_listener
         loop.create_task(start_ws_listener())
 
-    if os.environ.get("ENABLE_ASSISTANT") == "true":
-        from .ai.ai_assistant import start_assistant
-        scheduler = start_assistant()
+    if os.environ.get("ENABLE_AGENT") == "true":
+        from .ai.ai_agent import start_agent_jobs
+        scheduler = start_agent_jobs()
 
     yield
 
