@@ -28,9 +28,9 @@ Args:
     newsletter_email_address: The email address of the newsletter."""
             ),
             Tool(
-                name="get_today_calendar_events",
-                func=get_today_calendar_events,
-                description="Get today's events on Google Calendar."
+                name="get_calendar_events",
+                func=get_calendar_events,
+                description="Get events on Google Calendar."
             )
         ]
         ai_agent = initialize_agent(
@@ -40,13 +40,13 @@ Args:
             verbose=True,
             handle_parsing_errors=True,
         )
-        return ai_agent
+    return ai_agent
 
 
 @tool
-def get_today_calendar_events():
+def get_calendar_events():
     """
-    Get today's events on Google Calendar
+    Get events on Google Calendar
     """
     gcal = get_gcal_service()
     events = gcal.get_events_for_date()
@@ -152,24 +152,24 @@ async def agentic_send_daily_calendar_events():
     agent = get_ai_agent()
 
     completion = "Agent is unable to read and summarize today's calendar events."
-    prompt = """You are personal scheduling assistant. Your task: list today's events on the calendar.
+    prompt = """You are personal scheduling assistant. Your task: list events on the calendar.
 Available tools:
-- get_today_calendar_events: Get today's events on Google Calendar
+- get_calendar_events: Get events on Google Calendar
 
 Process:
-1. Use the get_today_calendar_events tool to get today's events from Google calendar
+1. Use the get_calendar_events tool to get events from Google calendar
 2. Parse important event details from the tool output
 3. Format the response as follows:
-    - List today's events in chronological order in a bullet point list
-    - Each bullet point should start with the start/end time of the event (formatted [hh:mm] - [hh:mm] [am/pm]) bolded
+    - List events in chronological order in a bullet point list
+    - Each bullet point should start with the start/end time of the event (formatted hh:mm - hh:mm am/pm) bolded
         - Ensure the date & time is correct. If you are not sure, indicate so.
-    - List event name bolded and as a sub bullet point.
-    - List other event details like location & description as sub bullet points. Make sure to use the bullet point character.
+    - List event name bolded and as a nested bullet point.
+    - List other event details like location & description as nested bullet points.
     - No need to explicitly prefix it with "event name", "event description", or similar.
     - Summarize the description into 2 sentences max.
-    - No need to mention no description available.
+    - If there is no description, don't add a bullet point for it.
     
-Don't provide a warning about today's date. You can trust that the tool correctly returns events for today. 
+You can trust that the tool correctly returns events.
 Think through each step, then execute your plan."""
 
     try:
