@@ -14,6 +14,7 @@ VALID_IMESSAGE_SENDERS = os.environ["VALID_IMESSAGE_SENDERS"].split(",")
 IMESSAGE_RECIPIENT = os.environ["IMESSAGE_RECIPIENT"]
 
 NEWSLETTER_EMAIL_ADDRESSES = os.environ["NEWSLETTER_EMAIL_ADDRESSES"].split(",") if os.environ.get("NEWSLETTER_EMAIL_ADDRESSES", "") != "" else None
+GOOGLE_CALENDAR_ID = os.environ.get("GOOGLE_CALENDAR_ID")
 
 GOOGLE_OAUTH_SCOPES = [
     "https://www.googleapis.com/auth/gmail.readonly",

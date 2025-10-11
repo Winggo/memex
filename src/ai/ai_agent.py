@@ -10,7 +10,7 @@ from .ai_models import llama_3_70b_free_together_model_deterministic
 from ..integrations.gmail_service import get_gmail_service
 from ..integrations.gcalendar_service import get_gcal_service
 from ..utils.messaging import send_message
-from ..utils.constants import NEWSLETTER_EMAIL_ADDRESSES
+from ..utils.constants import NEWSLETTER_EMAIL_ADDRESSES, GOOGLE_CALENDAR_ID
 
 
 ai_agent = None
@@ -59,11 +59,10 @@ def get_calendar_events():
 
 
 @tool
-def create_calendar_event(calendar_id: str, fields: dict):
+def create_calendar_event(fields: dict):
     """
     Create event on Google Calendar
     Args:
-        calendar_id: <string, required> The ID of the calendar to create event for.
         fields: <dict, required> Fields of the event to create. The dict keys are listed below.
             summary: <string, required> The title of the event.
             start_datetime: <string, required> The start date and/or time of the event. Formatted as "YYYY-MM-DDTHH:MM:SS".
@@ -73,7 +72,7 @@ def create_calendar_event(calendar_id: str, fields: dict):
             timezone: <string, optional> The timezone of the event.
     """
     gcal = get_gcal_service()
-    created_event = gcal.create_event(calendar_id, fields)
+    created_event = gcal.create_event(GOOGLE_CALENDAR_ID, fields)
     return created_event
 
 
