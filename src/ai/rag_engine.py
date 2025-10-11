@@ -12,21 +12,6 @@ vectorstore = Chroma(
 print(f"[RAG] Vector store loaded from {CHROMA_PATH}")
 
 
-determine_query_type_template = PromptTemplate(
-    input_variables=["prompt"],
-    template="""Given the prompt, determine what kind of data (notes, messages, contacts, and maps) would be most helpful in answering it. Only suggest one type of data.
-
-Respond using 1 sentence or less, and DO NOT mention "RAG", "querying", or "vector store".
-
-*Prompt:* {prompt}"""
-)
-
-def determine_query_type(prompt):
-    chain = determine_query_type_template | qwen_2_5_7b_together_model
-    llm_response = chain.invoke({"prompt": prompt})
-    return llm_response.content if hasattr(llm_response, 'content') else str(llm_response)
-
-
 rag_prompt_template = PromptTemplate(
     input_variables=["prompt", "context"],
     template="""You are a helpful personal assistant. Given the following prompt and context, provide a helpful response.
