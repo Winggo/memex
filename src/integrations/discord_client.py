@@ -1,6 +1,6 @@
 import discord
 
-from ..ai.rag_engine import respond_with_retrieved_context
+from ..ai.chat import process_message
 from ..utils.constants import DISCORD_APP_ID
 
 
@@ -13,7 +13,9 @@ class DiscordClient(discord.Client):
             return
 
         print(f"[Discord] Message received from {message.author}")
-        completion = respond_with_retrieved_context(message.content)
+
+        completion = await process_message(message.content)
+
         await message.channel.send(completion)
 
 

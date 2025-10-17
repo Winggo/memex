@@ -35,7 +35,16 @@ Args:
             Tool(
                 name="create_calendar_event",
                 func=create_calendar_event,
-                description="Create event on Google Calendar."
+                description="""Create event on Google Calendar.
+Args:
+    fields: <dict, required> Fields of the event to create. The dict keys are listed below.
+        summary: <string, required> The title of the event.
+        start_datetime: <string, required> The start date and/or time of the event. Formatted as "YYYY-MM-DDTHH:MM:SS".
+        end_datetime: <string, required> The end date and/or time of the event. Formatted as "YYYY-MM-DDTHH:MM:SS".
+        description: <string, optional> The description of the event.
+        location: <string, optional> The location of the event.
+        timezone: <string, optional> The timezone of the event.
+    """
             )
         ]
         ai_agent = initialize_agent(
