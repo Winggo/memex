@@ -1,7 +1,10 @@
 import asyncio
+import json
 from datetime import datetime
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
+from pydantic import BaseModel, Field, ValidationError
+from typing import Optional
 
 from langchain_core.tools import tool
 from langchain.agents import initialize_agent, Tool
@@ -67,8 +70,20 @@ def get_calendar_events():
     return events
 
 
+class CalendarEventFields(BaseModel):
+    """Schema for calendar event fields validation"""
+    summary: str = Field(..., description="The title of the event")
+    start_datetime: str = Field(..., description="The start date and/or time of the event. Formatted as 'YYYY-MM-DDTHH:MM:SS'")
+    end_datetime: str = Field(..., description="The end date and/or time of the event. Formatted as 'YYYY-MM-DDTHH:MM:SS'")
+    description: Optional[str] = Field(None, description="The description of the event")
+    location: Optional[str] = Field(None, description="The location of the event")
+    timezone: Optional[str] = Field(None, description="The timezone of the event")
+
+
+
+
 @tool
-def create_calendar_event(fields: dict):
+def create_calendar_event(fields):
     """
     Create event on Google Calendar
     Args:
@@ -80,8 +95,26 @@ def create_calendar_event(fields: dict):
             location: <string, optional> The location of the event.
             timezone: <string, optional> The timezone of the event.
     """
+    if isinstance(fields, str):
+        fields = json.loads(fields)
+
+    try:
+        validated_fields = CalendarEventFields(**fields)
+    except ValidationError as e:
+        error_details = []
+        for error in e.errors():
+            field = error['loc'][0] if error['loc'] else 'unknown'
+            message = error['msg']
+            error_details.append(f"Field '{field}': {message}")
+        
+        return {
+            "error": "Parameter validation failed",
+            "details": error_details,
+            "missing_required_fields": [error['loc'][0] for error in e.errors() if error['type'] == 'missing']
+        }
+
     gcal = get_gcal_service()
-    created_event = gcal.create_event(GOOGLE_CALENDAR_ID, fields)
+    created_event = gcal.create_event(GOOGLE_CALENDAR_ID, validated_fields.model_dump())
     return created_event
 
 

@@ -1,4 +1,5 @@
 import os
+import dateutil.parser
 from datetime import datetime
 from google.oauth2.credentials import Credentials
 from google.auth.transport.requests import Request
@@ -89,26 +90,34 @@ class GcalendarService:
             print(f"[GCal] Required fields not found. Event not created.")
             return
 
-        event = {
-            "summary": fields["summary"],
-            "start": {
-                "dateTime": fields["start_datetime"].isoformat(),
-                "timeZone": fields.get("timezone", "America/Los_Angeles"),
-            },
-            "end": {
-                "dateTime": fields["end_datetime"].isoformat(),
-                "timeZone": fields.get("timezone", "America/Los_Angeles"),
-            },
-            "description": fields.get("description", "Created by Memex"),
-            "location": fields.get("location"),
-        }
+        try:
+            start_dt = dateutil.parser.parse(fields["start_datetime"])
+            end_dt = dateutil.parser.parse(fields["end_datetime"])
 
-        created_event = self.service.events().insert(
-            calendarId=calendar_id,
-            body=event,
-        ).execute()
-        
-        return created_event
+            event = {
+                "summary": fields["summary"],
+                "start": {
+                    "dateTime": start_dt,
+                    "timeZone": fields.get("timezone", "America/Los_Angeles"),
+                },
+                "end": {
+                    "dateTime": end_dt,
+                    "timeZone": fields.get("timezone", "America/Los_Angeles"),
+                },
+                "description": fields.get("description", "Created by Memex"),
+                "location": fields.get("location"),
+            }
+
+            created_event = self.service.events().insert(
+                calendarId=calendar_id,
+                body=event,
+            ).execute()
+            
+            return created_event
+
+        except (ValueError, TypeError) as e:
+            print(f"[GCal] Error parsing datetime: {e}")
+            return {"error": f"Invalid datetime format: {e}"}
 
 
 
