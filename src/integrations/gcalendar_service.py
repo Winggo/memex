@@ -104,7 +104,7 @@ class GcalendarService:
                     "dateTime": end_dt,
                     "timeZone": fields.get("timezone", "America/Los_Angeles"),
                 },
-                "description": fields.get("description", "Created by Memex"),
+                "description": fields.get("description", "Created by MemEx"),
                 "location": fields.get("location"),
             }
 

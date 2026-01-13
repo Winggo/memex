@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Memex is a personal LLM that leverages your personal data corpus (emails, messages, notes, calendar) as its knowledge base. It uses RAG (Retrieval-Augmented Generation) with vector embeddings and autonomous agents to provide contextual responses and proactive assistance through Discord and iMessage interfaces.
+MemEx is a personal LLM that leverages your personal data corpus (emails, messages, notes, calendar) as its knowledge base. It uses RAG (Retrieval-Augmented Generation) with vector embeddings and autonomous agents to provide contextual responses and proactive assistance through Discord and iMessage interfaces.
 
 **Core Technologies**: FastAPI, LangChain, ChromaDB, Together.ai (Llama-3.3-70B, Qwen2.5-7B), Unstructured.io
 

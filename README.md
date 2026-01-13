@@ -1,4 +1,4 @@
-# Memex
+# MemEx (Memory Extension)
 
 A personal LLM leveraging my corpus as its knowledge base.
 
@@ -31,7 +31,7 @@ Currently included data:
 2. Data processing: clean, chunk, and generating embeddings
 3. Store embeddings into a vector DB
 4. Leverage an open-source LLM for inference and to perform RAG
-5. Use Discord or another app to serve as Memex's UI
+5. Use Discord or another app to serve as MemEx's UI
 
 
 ## Architecture
